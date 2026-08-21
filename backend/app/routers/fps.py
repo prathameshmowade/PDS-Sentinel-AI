@@ -146,6 +146,4 @@ def find_nearby_fps(lat: float = Query(...), lng: float = Query(...), radius_km:
 
     
 
-    nearby.sort(key=lambda x: (not x["is_recommended"], x["distance_km"]))
-
-    return nearby159184209233265313351379
+    return nearby

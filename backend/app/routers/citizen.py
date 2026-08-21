@@ -2,7 +2,8 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime
-from app.data_store import BENEFICIARIES, COMPLAINTS, FPS_SHOPS
+from app.data_store import BENEFICIARIES, FPS_SHOPS
+from app.db import JSONDatabase
 from app.nlp_classifier import GrievanceNLPClassifier
 
 router = APIRouter(prefix="/api/citizen", tags=["Citizen Portal & Grievance Redressal"])
@@ -110,16 +111,16 @@ def get_ration_card_entitlement(card_no: str):
 
 @router.get("/grievances")
 def list_grievances(fps_id: Optional[str] = None, status: Optional[str] = None):
-    results = COMPLAINTS
+    results = JSONDatabase.get("complaints")
     if fps_id:
-        results = [c for c in results if c["fps_id"] == fps_id]
+        results = [c for c in results if c.get("fps_id") == fps_id]
     if status and status != "ALL":
         results = [c for c in results if c.get("status") == status]
     return results
 
 @router.get("/grievances/track/{ticket_id}")
 def track_grievance(ticket_id: str):
-    complaint = next((c for c in COMPLAINTS if c["id"] == ticket_id), None)
+    complaint = JSONDatabase.get_complaint_by_id(ticket_id)
     if not complaint:
         raise HTTPException(status_code=404, detail="Complaint Ticket ID not found")
     return complaint
@@ -132,7 +133,9 @@ def submit_grievance(payload: ComplaintSubmission):
     # Run Multilingual NLP Classifier
     nlp_res = GrievanceNLPClassifier.classify(payload.complaint_text, payload.language)
     
-    new_id = f"GRV-2026-{len(COMPLAINTS) + 1053}"
+    all_complaints = JSONDatabase.get("complaints")
+    new_id = f"GRV-2026-{len(all_complaints) + 1053}"
+    
     complaint_entry = {
         "id": new_id,
         "fps_id": payload.fps_id,
@@ -146,7 +149,7 @@ def submit_grievance(payload: ComplaintSubmission):
         "sentiment": nlp_res["sentiment"],
         "urgency": nlp_res["urgency"],
         "created_at": datetime.now().isoformat(),
-        "status": "PENDING_REVIEW", # PENDING_REVIEW -> ASSIGNED -> RESOLVED
+        "status": "PENDING_REVIEW",
         "assigned_squad": None,
         "assigned_type": None,
         "verified_with_mste": nlp_res["requires_mste_cross_verification"],
@@ -165,7 +168,7 @@ def submit_grievance(payload: ComplaintSubmission):
         ]
     }
     
-    COMPLAINTS.insert(0, complaint_entry)
+    JSONDatabase.add_complaint(complaint_entry)
     
     return {
         "status": "SUCCESS",
@@ -177,49 +180,51 @@ def submit_grievance(payload: ComplaintSubmission):
 
 @router.post("/grievances/{ticket_id}/assign")
 def assign_grievance(ticket_id: str, payload: ComplaintAssignment):
-    complaint = next((c for c in COMPLAINTS if c["id"] == ticket_id), None)
+    complaint = JSONDatabase.get_complaint_by_id(ticket_id)
     if not complaint:
         raise HTTPException(status_code=404, detail="Complaint Ticket ID not found")
     
-    complaint["assigned_squad"] = payload.assigned_squad
-    complaint["assigned_type"] = payload.assignment_type
-    complaint["status"] = "ASSIGNED"
-    
-    if "timeline" not in complaint:
-        complaint["timeline"] = []
-        
-    complaint["timeline"].append({
+    timeline = complaint.get("timeline", [])
+    timeline.append({
         "status": "Assigned",
         "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "detail": f"Assigned to {payload.assigned_squad} ({payload.assignment_type}). {payload.officer_notes}".strip()
     })
     
+    updated = JSONDatabase.update_complaint(ticket_id, {
+        "assigned_squad": payload.assigned_squad,
+        "assigned_type": payload.assignment_type,
+        "status": "ASSIGNED",
+        "timeline": timeline
+    })
+    
     return {
         "status": "SUCCESS",
         "message": f"Complaint {ticket_id} assigned to {payload.assigned_squad}",
-        "complaint": complaint
+        "complaint": updated
     }
 
 @router.post("/grievances/{ticket_id}/status")
 def update_grievance_status(ticket_id: str, payload: ComplaintStatusUpdate):
-    complaint = next((c for c in COMPLAINTS if c["id"] == ticket_id), None)
+    complaint = JSONDatabase.get_complaint_by_id(ticket_id)
     if not complaint:
         raise HTTPException(status_code=404, detail="Complaint Ticket ID not found")
     
-    complaint["status"] = payload.status
-    complaint["resolution_notes"] = payload.resolution_notes
-    
-    if "timeline" not in complaint:
-        complaint["timeline"] = []
-        
-    complaint["timeline"].append({
+    timeline = complaint.get("timeline", [])
+    timeline.append({
         "status": payload.status,
         "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "detail": payload.resolution_notes or f"Status updated to {payload.status}"
     })
     
+    updated = JSONDatabase.update_complaint(ticket_id, {
+        "status": payload.status,
+        "resolution_notes": payload.resolution_notes,
+        "timeline": timeline
+    })
+    
     return {
         "status": "SUCCESS",
         "message": f"Complaint {ticket_id} updated to {payload.status}",
-        "complaint": complaint
+        "complaint": updated
     }

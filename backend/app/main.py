@@ -13,15 +13,16 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.routers import stats, fps, trucks, alerts, citizen, simulation, copilot
+from app.data_store import DATA_STORE
+from app.db import JSONDatabase
+
+# Initialize Persistent Storage
+JSONDatabase.initialize(DATA_STORE)
 
 app = FastAPI(
-
     title="PDS Sentinel AI Decision Engine",
-
     description="Predictive Prevention, Multi-Source Trust Engine, Explainable AI, and Digital Twin for Public Distribution Systems.",
-
     version="2.0.0"
-
 )
 
 # Enable CORS for Frontend

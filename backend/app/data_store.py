@@ -1063,23 +1063,36 @@ BENEFICIARIES = {
         },
 
         "current_month_status": {
-
             "month": "August 2026",
-
             "rice_lifted_kg": 0.0,
-
             "wheat_lifted_kg": 0.0,
-
             "sugar_lifted_kg": 0.0,
-
             "status": "DENIED_BIOMETRIC_ERROR",
-
             "warning": "High anomaly score detected at shop. Immediate complaint redressal active."
-
         }
-
+    },
+    "RC-MH-2710-9912": {
+        "card_no": "RC-MH-2710-9912",
+        "card_type": "PHH (Priority Household - Yellow)",
+        "head_of_family": "Rajendra Prasad Sharma",
+        "family_members": 4,
+        "assigned_fps_id": "FPS-4104",
+        "district": "Nagpur East",
+        "monthly_quota": {
+            "rice_kg": 15.0,
+            "wheat_kg": 10.0,
+            "sugar_kg": 1.0,
+            "subsidized_price_total_inr": 58
+        },
+        "current_month_status": {
+            "month": "August 2026",
+            "rice_lifted_kg": 12.6,
+            "wheat_lifted_kg": 8.4,
+            "sugar_lifted_kg": 0.8,
+            "status": "SHORTFALL_LIFTING",
+            "warning": "Under-weighing discrepancy reported (Received 4.2kg instead of entitled 5.0kg per unit)."
+        }
     }
-
 }
 
 DATA_STORE = {

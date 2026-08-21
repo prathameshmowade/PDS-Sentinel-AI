@@ -344,12 +344,25 @@ export default function CitizenPortal({ fpsList = [], currentLang = 'en', onLang
             RC-MH-2710-8849 (Flagged Shop Issue)
           </button>
           <button
+            onClick={() => { setCardNo('RC-MH-2710-3321'); handleSearchCard('RC-MH-2710-3321'); }}
+            className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-amber-700 dark:text-amber-300 font-mono text-[10px] border border-slate-200 dark:border-slate-700"
+          >
+            RC-MH-2710-3321 (Biometric Denial)
+          </button>
+          <button
+            onClick={() => { setCardNo('RC-MH-2710-9912'); handleSearchCard('RC-MH-2710-9912'); }}
+            className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-sky-700 dark:text-sky-300 font-mono text-[10px] border border-slate-200 dark:border-slate-700"
+          >
+            RC-MH-2710-9912 (Under-Weighing)
+          </button>
+          <button
             onClick={() => { setCardNo('RC-MH-2710-4410'); handleSearchCard('RC-MH-2710-4410'); }}
             className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-emerald-700 dark:text-emerald-300 font-mono text-[10px] border border-slate-200 dark:border-slate-700"
           >
             RC-MH-2710-4410 (Lifted / Clean)
           </button>
         </div>
+
 
         {/* Card Details & Entitled vs Received Comparison */}
         {cardData && (
