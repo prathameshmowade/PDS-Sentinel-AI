@@ -1,54 +1,199 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
-import './index.css'
-
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
-
-// Sync step: 8
-
-// Sync step: 19
-
-// Sync step: 8
-
-// Sync step: 19
-
-// Sync step: 30
-
-// Sync step: 41
-
-// Sync step: 52
-
-// Sync step: 63
-
-// Sync step: 81
-
-// Sync step: 95
-
-// Sync step: 109
-
-// Sync step: 123
-
-// Sync step: 137
-
-// Sync step: 146
-
-// Sync step: 171
-
-// Sync step: 196
-
-// Sync step: 220
-
-// Sync step: 252
-
-// Sync step: 284
-
-// Sync step: 300
-
-// Sync step: 338
+import React from 'react'
 
-// Sync step: 363
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import ReactDOM from 'react-dom/client'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import App from './App.jsx'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import './index.css'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <React.StrictMode>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <App />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </React.StrictMode>,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+)819819304152638195109123137146171196220252284300338363

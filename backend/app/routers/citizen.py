@@ -1,109 +1,737 @@
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
-from typing import Optional, List
-from datetime import datetime
-from app.data_store import BENEFICIARIES, COMPLAINTS, FPS_SHOPS
-from app.nlp_classifier import GrievanceNLPClassifier
-
-router = APIRouter(prefix="/api/citizen", tags=["Citizen Portal & Grievance Redressal"])
-
-class ComplaintSubmission(BaseModel):
-    citizen_name: str
-    card_no: str
-    fps_id: str
-    language: Optional[str] = "auto"
-    complaint_text: str
-
-@router.get("/ration-card/{card_no}")
-def get_ration_card_entitlement(card_no: str):
-    card = BENEFICIARIES.get(card_no)
-    if not card:
-        # Generate dynamic realistic fallback if user searches an unseeded card number
-        return {
-            "card_no": card_no,
-            "card_type": "NFSA Priority Household (PHH)",
-            "head_of_family": "Beneficiary Holder",
-            "family_members": 4,
-            "assigned_fps_id": "FPS-4101",
-            "district": "Nagpur Urban",
-            "monthly_quota": {
-                "rice_kg": 15.0,
-                "wheat_kg": 10.0,
-                "sugar_kg": 1.0,
-                "subsidized_price_total_inr": 58
-            },
-            "current_month_status": {
-                "month": "August 2026",
-                "rice_lifted_kg": 0.0,
-                "wheat_lifted_kg": 0.0,
-                "sugar_lifted_kg": 0.0,
-                "status": "PENDING_LIFTING",
-                "warning": None
-            },
-            "assigned_fps": next((f for f in FPS_SHOPS if f["id"] == "FPS-4101"), None)
-        }
-    
-    assigned_fps = next((f for f in FPS_SHOPS if f["id"] == card["assigned_fps_id"]), None)
-    return {
-        **card,
-        "assigned_fps": assigned_fps
-    }
-
-@router.get("/grievances")
-def list_grievances(fps_id: Optional[str] = None):
-    if fps_id:
-        return [c for c in COMPLAINTS if c["fps_id"] == fps_id]
-    return COMPLAINTS
-
-@router.post("/grievances")
-def submit_grievance(payload: ComplaintSubmission):
-    fps = next((f for f in FPS_SHOPS if f["id"] == payload.fps_id), None)
-    fps_name = fps["name"] if fps else "Designated PDS Center"
-
-    # Run Multilingual NLP Classifier
-    nlp_res = GrievanceNLPClassifier.classify(payload.complaint_text, payload.language)
-    
-    new_id = f"GRV-2026-{len(COMPLAINTS) + 1053}"
-    complaint_entry = {
-        "id": new_id,
-        "fps_id": payload.fps_id,
-        "fps_name": fps_name,
-        "citizen_name": payload.citizen_name,
-        "card_no": payload.card_no,
-        "language": nlp_res["detected_language"],
-        "original_text": payload.complaint_text,
-        "translated_text": payload.complaint_text, # In production would call MT API
-        "category": nlp_res["category"],
-        "sentiment": nlp_res["sentiment"],
-        "urgency": nlp_res["urgency"],
-        "created_at": datetime.now().isoformat(),
-        "status": "AI_TRIAGED_ACTIVE",
-        "verified_with_mste": nlp_res["requires_mste_cross_verification"],
-        "nlp_confidence": nlp_res["confidence_score"]
-    }
-    
-    COMPLAINTS.insert(0, complaint_entry)
-    
-    return {
-        "status": "SUCCESS",
-        "tracking_token": new_id,
-        "message": "Your grievance has been received and triaged by PDS Sentinel AI.",
-        "ai_triage_result": nlp_res,
-        "complaint": complaint_entry
-    }
-
-# Sync step: 157
-
-# Sync step: 182
-
-# Sync step: 207
-
-# Sync step: 231
-
-# Sync step: 263
-
-# Sync step: 311
-
-# Sync step: 349
+from fastapi import APIRouter, HTTPException
 
-# Sync step: 377
+
+
+
+
+
+
+from pydantic import BaseModel
+
+
+
+
+
+
+
+from typing import Optional, List
+
+
+
+
+
+
+
+from datetime import datetime
+
+
+
+
+
+
+
+from app.data_store import BENEFICIARIES, COMPLAINTS, FPS_SHOPS
+
+
+
+
+
+
+
+from app.nlp_classifier import GrievanceNLPClassifier
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+router = APIRouter(prefix="/api/citizen", tags=["Citizen Portal & Grievance Redressal"])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class ComplaintSubmission(BaseModel):
+
+
+
+
+
+
+
+    citizen_name: str
+
+
+
+
+
+
+
+    card_no: str
+
+
+
+
+
+
+
+    fps_id: str
+
+
+
+
+
+
+
+    language: Optional[str] = "auto"
+
+
+
+
+
+
+
+    complaint_text: str
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@router.get("/ration-card/{card_no}")
+
+
+
+
+
+
+
+def get_ration_card_entitlement(card_no: str):
+
+
+
+
+
+
+
+    card = BENEFICIARIES.get(card_no)
+
+
+
+
+
+
+
+    if not card:
+
+
+
+
+
+
+
+        # Generate dynamic realistic fallback if user searches an unseeded card number
+
+
+
+
+
+
+
+        return {
+
+
+
+
+
+
+
+            "card_no": card_no,
+
+
+
+
+
+
+
+            "card_type": "NFSA Priority Household (PHH)",
+
+
+
+
+
+
+
+            "head_of_family": "Beneficiary Holder",
+
+
+
+
+
+
+
+            "family_members": 4,
+
+
+
+
+
+
+
+            "assigned_fps_id": "FPS-4101",
+
+
+
+
+
+
+
+            "district": "Nagpur Urban",
+
+
+
+
+
+
+
+            "monthly_quota": {
+
+
+
+
+
+
+
+                "rice_kg": 15.0,
+
+
+
+
+
+
+
+                "wheat_kg": 10.0,
+
+
+
+
+
+
+
+                "sugar_kg": 1.0,
+
+
+
+
+
+
+
+                "subsidized_price_total_inr": 58
+
+
+
+
+
+
+
+            },
+
+
+
+
+
+
+
+            "current_month_status": {
+
+
+
+
+
+
+
+                "month": "August 2026",
+
+
+
+
+
+
+
+                "rice_lifted_kg": 0.0,
+
+
+
+
+
+
+
+                "wheat_lifted_kg": 0.0,
+
+
+
+
+
+
+
+                "sugar_lifted_kg": 0.0,
+
+
+
+
+
+
+
+                "status": "PENDING_LIFTING",
+
+
+
+
+
+
+
+                "warning": None
+
+
+
+
+
+
+
+            },
+
+
+
+
+
+
+
+            "assigned_fps": next((f for f in FPS_SHOPS if f["id"] == "FPS-4101"), None)
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    assigned_fps = next((f for f in FPS_SHOPS if f["id"] == card["assigned_fps_id"]), None)
+
+
+
+
+
+
+
+    return {
+
+
+
+
+
+
+
+        **card,
+
+
+
+
+
+
+
+        "assigned_fps": assigned_fps
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@router.get("/grievances")
+
+
+
+
+
+
+
+def list_grievances(fps_id: Optional[str] = None):
+
+
+
+
+
+
+
+    if fps_id:
+
+
+
+
+
+
+
+        return [c for c in COMPLAINTS if c["fps_id"] == fps_id]
+
+
+
+
+
+
+
+    return COMPLAINTS
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@router.post("/grievances")
+
+
+
+
+
+
+
+def submit_grievance(payload: ComplaintSubmission):
+
+
+
+
+
+
+
+    fps = next((f for f in FPS_SHOPS if f["id"] == payload.fps_id), None)
+
+
+
+
+
+
+
+    fps_name = fps["name"] if fps else "Designated PDS Center"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    # Run Multilingual NLP Classifier
+
+
+
+
+
+
+
+    nlp_res = GrievanceNLPClassifier.classify(payload.complaint_text, payload.language)
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    new_id = f"GRV-2026-{len(COMPLAINTS) + 1053}"
+
+
+
+
+
+
+
+    complaint_entry = {
+
+
+
+
+
+
+
+        "id": new_id,
+
+
+
+
+
+
+
+        "fps_id": payload.fps_id,
+
+
+
+
+
+
+
+        "fps_name": fps_name,
+
+
+
+
+
+
+
+        "citizen_name": payload.citizen_name,
+
+
+
+
+
+
+
+        "card_no": payload.card_no,
+
+
+
+
+
+
+
+        "language": nlp_res["detected_language"],
+
+
+
+
+
+
+
+        "original_text": payload.complaint_text,
+
+
+
+
+
+
+
+        "translated_text": payload.complaint_text, # In production would call MT API
+
+
+
+
+
+
+
+        "category": nlp_res["category"],
+
+
+
+
+
+
+
+        "sentiment": nlp_res["sentiment"],
+
+
+
+
+
+
+
+        "urgency": nlp_res["urgency"],
+
+
+
+
+
+
+
+        "created_at": datetime.now().isoformat(),
+
+
+
+
+
+
+
+        "status": "AI_TRIAGED_ACTIVE",
+
+
+
+
+
+
+
+        "verified_with_mste": nlp_res["requires_mste_cross_verification"],
+
+
+
+
+
+
+
+        "nlp_confidence": nlp_res["confidence_score"]
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    COMPLAINTS.insert(0, complaint_entry)
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    return {
+
+
+
+
+
+
+
+        "status": "SUCCESS",
+
+
+
+
+
+
+
+        "tracking_token": new_id,
+
+
+
+
+
+
+
+        "message": "Your grievance has been received and triaged by PDS Sentinel AI.",
+
+
+
+
+
+
+
+        "ai_triage_result": nlp_res,
+
+
+
+
+
+
+
+        "complaint": complaint_entry
+
+
+
+
+
+
+
+    }157182207231263311349377

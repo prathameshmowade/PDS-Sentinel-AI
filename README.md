@@ -109,6 +109,4 @@ npm run dev
 - **Team Member 2**: Yash Kapse (CSE - AIML)
 - **Team Member 3**: Dhanshree Bhorkar (CSE - AIML)
 - **Team Member 4**: Neha Musale (CSE - AIML)
-- **Institution**: S. B. Jain Institute of Technology, Management & Research, Nagpur
-
-<!-- Sync step: 370 -->
+- **Institution**: S. B. Jain Institute of Technology, Management & Research, Nagpur370 -->

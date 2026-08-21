@@ -1,46 +1,101 @@
-export default {
-  plugins: {
-    tailwindcss: {},
-    autoprefixer: {},
-  },
-}
-
-// Sync step: 6
-
-// Sync step: 17
-
-// Sync step: 6
-
-// Sync step: 17
-
-// Sync step: 28
-
-// Sync step: 39
-
-// Sync step: 50
-
-// Sync step: 61
-
-// Sync step: 79
-
-// Sync step: 93
-
-// Sync step: 107
-
-// Sync step: 121
-
-// Sync step: 135
-
-// Sync step: 143
-
-// Sync step: 168
-
-// Sync step: 193
-
-// Sync step: 242
-
-// Sync step: 274
-
-// Sync step: 322
+export default {
 
-// Sync step: 388
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  plugins: {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    tailwindcss: {},
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    autoprefixer: {},
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}617617283950617993107121135143168193242274322388

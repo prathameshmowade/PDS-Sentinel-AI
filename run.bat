@@ -18,6 +18,4 @@ echo All servers launched!
 echo - Government Officer Command Center: http://localhost:5173
 echo - FastAPI Backend Documentation:     http://localhost:8000/docs
 echo ========================================================
-pause
-
-# Sync step: 367
+pause367

@@ -12,6 +12,4 @@ Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd frontend; npm 
 
 Write-Host "`nServers launched successfully!" -ForegroundColor Green
 Write-Host "-> Dashboard & Citizen Portal: http://localhost:5173" -ForegroundColor White
-Write-Host "-> FastAPI Interactive Swagger: http://localhost:8000/docs" -ForegroundColor White
-
-# Sync step: 368
+Write-Host "-> FastAPI Interactive Swagger: http://localhost:8000/docs" -ForegroundColor White368
