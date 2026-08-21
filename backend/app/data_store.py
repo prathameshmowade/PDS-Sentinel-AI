@@ -847,136 +847,102 @@ ALERTS = [
 # Citizen Grievances / Complaints with Multilingual Support (English, Hindi, Marathi)
 
 COMPLAINTS = [
-
     {
-
         "id": "GRV-2026-1049",
-
         "fps_id": "FPS-4102",
-
         "fps_name": "Kisan Kranti Bachat Gat",
-
         "citizen_name": "Sunil Kamble",
-
         "card_no": "RC-MH-2710-8849",
-
         "language": "mr",
-
         "original_text": "दुकानदार सांगतो धान्य संपले आहे, पण रात्री ट्रक मधून धान्य खासगी गिरणीत नेताना पाहिले. आम्हाला या महिन्याचा कोटा मिळाला नाही.",
-
         "translated_text": "Dealer says grain is finished, but we saw grain being loaded from truck into a private mill at night. We have not received our quota this month.",
-
         "category": "STOCK_DIVERSION",
-
         "sentiment": "NEGATIVE",
-
-        "urgency": "HIGH",
-
+        "urgency": "CRITICAL",
         "created_at": "2026-08-17T11:20:00",
-
-        "status": "VERIFIED_AI_ALERT",
-
-        "verified_with_mste": True
-
+        "status": "PENDING_REVIEW",
+        "assigned_squad": None,
+        "assigned_type": None,
+        "verified_with_mste": True,
+        "nlp_confidence": 0.96,
+        "timeline": [
+            {"status": "Submitted", "timestamp": "2026-08-17 11:20:00", "detail": "Grievance received via Citizen Voice Portal (Marathi)"},
+            {"status": "AI Triaged", "timestamp": "2026-08-17 11:20:04", "detail": "Corroborated with -4.2 MT weighbridge shortfall at FPS-4102"}
+        ]
     },
-
     {
-
         "id": "GRV-2026-1050",
-
         "fps_id": "FPS-4102",
-
         "fps_name": "Kisan Kranti Bachat Gat",
-
         "citizen_name": "Amina Bano",
-
         "card_no": "RC-MH-2710-3321",
-
         "language": "hi",
-
         "original_text": "राशन डीलर फिंगरप्रिंट लगवा लेता है और बोलता है सर्वर डाउन है राशन कल आना। 3 दिन से चक्कर लगा रहे हैं राशन नहीं दिया।",
-
         "translated_text": "Ration dealer takes fingerprint and claims server is down and to come tomorrow. Making rounds for 3 days, no ration given.",
-
         "category": "BIOMETRIC_DENIAL",
-
         "sentiment": "NEGATIVE",
-
         "urgency": "HIGH",
-
         "created_at": "2026-08-17T12:05:00",
-
-        "status": "VERIFIED_AI_ALERT",
-
-        "verified_with_mste": True
-
+        "status": "ASSIGNED",
+        "assigned_squad": "Flying Squad Unit #2 (East Zone)",
+        "assigned_type": "AUTO_AI",
+        "verified_with_mste": True,
+        "nlp_confidence": 0.94,
+        "timeline": [
+            {"status": "Submitted", "timestamp": "2026-08-17 12:05:00", "detail": "Grievance registered in Hindi"},
+            {"status": "AI Triaged", "timestamp": "2026-08-17 12:05:02", "detail": "High correlation with POS ghost card velocity anomalies"},
+            {"status": "Assigned", "timestamp": "2026-08-17 12:15:00", "detail": "Auto-dispatched to Flying Squad Unit #2"}
+        ]
     },
-
     {
-
         "id": "GRV-2026-1051",
-
         "fps_id": "FPS-4104",
-
         "fps_name": "Shri Ganesh Vitaran Kendra",
-
         "citizen_name": "Rajendra Sharma",
-
         "card_no": "RC-MH-2710-9912",
-
         "language": "en",
-
         "original_text": "The electronic weighing scale is showing 5kg on screen but when we weighed it at home grocery store it was only 4.2kg. Overcharging extra 5 rupees per kg.",
-
         "translated_text": "The electronic weighing scale is showing 5kg on screen but when we weighed it at home grocery store it was only 4.2kg. Overcharging extra 5 rupees per kg.",
-
         "category": "UNDER_WEIGHING",
-
         "sentiment": "NEGATIVE",
-
         "urgency": "MEDIUM",
-
         "created_at": "2026-08-17T09:40:00",
-
         "status": "UNDER_INVESTIGATION",
-
-        "verified_with_mste": True
-
+        "assigned_squad": "Weights & Measures Inspector Team 4",
+        "assigned_type": "MANUAL",
+        "verified_with_mste": True,
+        "nlp_confidence": 0.91,
+        "timeline": [
+            {"status": "Submitted", "timestamp": "2026-08-17 09:40:00", "detail": "Grievance registered in English"},
+            {"status": "AI Triaged", "timestamp": "2026-08-17 09:40:03", "detail": "E-scale tare lock anomaly confirmed"},
+            {"status": "Assigned", "timestamp": "2026-08-17 10:00:00", "detail": "Assigned for surprise scale re-calibration"}
+        ]
     },
-
     {
-
         "id": "GRV-2026-1052",
-
         "fps_id": "FPS-4101",
-
         "fps_name": "Jai Durga Seva Sahakari Sanstha",
-
         "citizen_name": "Pooja Meshram",
-
         "card_no": "RC-MH-2710-4410",
-
         "language": "mr",
-
         "original_text": "या दुकानावर सर्व धान्य वेळेवर आणि योग्य वजनाने मिळाले. सेवा अतिशय चांगली आहे.",
-
         "translated_text": "All grain received on time and with exact weight at this shop. Service is very good.",
-
         "category": "APPRECIATION_FEEDBACK",
-
         "sentiment": "POSITIVE",
-
         "urgency": "LOW",
-
         "created_at": "2026-08-17T10:15:00",
-
         "status": "RESOLVED",
-
-        "verified_with_mste": False
-
+        "assigned_squad": None,
+        "assigned_type": None,
+        "verified_with_mste": False,
+        "nlp_confidence": 0.98,
+        "timeline": [
+            {"status": "Submitted", "timestamp": "2026-08-17 10:15:00", "detail": "Beneficiary positive feedback logged"},
+            {"status": "Resolved", "timestamp": "2026-08-17 10:16:00", "detail": "Credited to Dealer Trust Score (+2.5 pts)"}
+        ]
     }
-
 ]
+
 
 # Sample Beneficiary Ration Cards for Citizen Portal Search
 

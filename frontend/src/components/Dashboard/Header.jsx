@@ -223,25 +223,15 @@ export default function Header({
             </button>
 
             <button
-
-              onClick={() => setActiveTab('citizen_portal')}
-
+              onClick={() => setActiveTab('grievances')}
               className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg font-semibold transition-all border ${
-
-                activeTab === 'citizen_portal'
-
+                activeTab === 'grievances'
                   ? 'bg-white dark:bg-slate-800 text-amber-700 dark:text-amber-400 border-amber-400 dark:border-amber-500 shadow-xs ring-1 ring-amber-500/20'
-
                   : 'bg-white/60 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-white dark:hover:bg-slate-800'
-
               }`}
-
             >
-
               <Users className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-
-              <span>Citizen Redressal</span>
-
+              <span>Citizen Complaints</span>
             </button>
 
             <button
@@ -451,23 +441,14 @@ export default function Header({
         </button>
 
         <button
-
-          onClick={() => setActiveTab('citizen_portal')}
-
+          onClick={() => setActiveTab('grievances')}
           className={`px-2.5 py-1.5 rounded-lg font-semibold border transition-all ${
-
-            activeTab === 'citizen_portal'
-
+            activeTab === 'grievances'
               ? 'bg-white dark:bg-slate-800 text-amber-600 dark:text-amber-400 border-amber-400 dark:border-amber-500 shadow-xs'
-
               : 'bg-white/60 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800'
-
           }`}
-
         >
-
-          Citizen
-
+          Complaints
         </button>
 
         <button

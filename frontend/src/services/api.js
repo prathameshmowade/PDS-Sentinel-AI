@@ -315,27 +315,59 @@ I have processed your query: **"${query}"**.
   },
 
   submitGrievance: async (data) => {
-
     try {
-
       const res = await fetch(`${API_BASE_URL}/citizen/grievances`, {
-
         method: 'POST',
-
         headers: { 'Content-Type': 'application/json' },
-
         body: JSON.stringify(data)
-
       });
-
       return await res.json();
-
     } catch (e) {
-
       return { status: 'ERROR', message: e.message };
-
     }
+  },
 
+  trackGrievance: async (ticketId) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/citizen/grievances/track/${ticketId}`);
+      if (!res.ok) throw new Error('Ticket not found');
+      return await res.json();
+    } catch (e) {
+      return null;
+    }
+  },
+
+  assignGrievance: async (ticketId, assignedSquad, notes = '', assignmentType = 'MANUAL') => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/citizen/grievances/${ticketId}/assign`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          assigned_squad: assignedSquad,
+          officer_notes: notes,
+          assignment_type: assignmentType
+        })
+      });
+      return await res.json();
+    } catch (e) {
+      return { status: 'ERROR', message: e.message };
+    }
+  },
+
+  updateGrievanceStatus: async (ticketId, status, resolutionNotes = '') => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/citizen/grievances/${ticketId}/status`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          status: status,
+          resolution_notes: resolutionNotes
+        })
+      });
+      return await res.json();
+    } catch (e) {
+      return { status: 'ERROR', message: e.message };
+    }
   },
 
   // Digital Twin Simulation
