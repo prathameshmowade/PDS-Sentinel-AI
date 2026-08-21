@@ -352,22 +352,26 @@ export default function Header({
 
             {/* Logout Button */}
 
+            {/* Switch to Citizen Portal */}
             {onLogout && (
-
               <button
-
                 onClick={onLogout}
-
-                title="Log Out of PDS Sentinel"
-
-                className="p-2 rounded-lg bg-rose-50 dark:bg-rose-500/10 border border-rose-300 dark:border-rose-500/30 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-500/20 transition-colors ml-1 shadow-2xs"
-
+                title="Switch to Citizen Welfare Portal"
+                className="px-2.5 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-300 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition-colors text-xs font-semibold flex items-center space-x-1 shadow-2xs"
               >
-
-                <LogOut className="w-3.5 h-3.5" />
-
+                <span>👨‍👩‍👧 Citizen View</span>
               </button>
+            )}
 
+            {/* Logout Button */}
+            {onLogout && (
+              <button
+                onClick={onLogout}
+                title="Log Out of PDS Sentinel"
+                className="p-2 rounded-lg bg-rose-50 dark:bg-rose-500/10 border border-rose-300 dark:border-rose-500/30 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-500/20 transition-colors ml-1 shadow-2xs"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+              </button>
             )}
 
           </div>

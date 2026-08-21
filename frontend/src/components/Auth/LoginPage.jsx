@@ -163,23 +163,11 @@ export default function LoginPage({ onLogin, theme }) {
   };
 
   const handleQuickDemoSelect = (account) => {
-
-    if (account.userType === 'officer') {
-
-      setAuthMode('officer');
-
-      setEmail(account.email);
-
-      setPassword(account.password);
-
-    } else {
-
-      setAuthMode('citizen');
-
-      setRationCardNo(account.email);
-
-    }
-
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      onLogin(account);
+    }, 200);
   };
 
   return (

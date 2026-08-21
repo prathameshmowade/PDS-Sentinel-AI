@@ -105,6 +105,15 @@ export default function CitizenHeader({
               <span className="font-bold text-slate-900 dark:text-emerald-100">{currentUser?.name || 'Beneficiary'}</span>
             </div>
 
+            {/* Switch to Official Portal Button */}
+            <button
+              onClick={() => onLogout()}
+              title="Switch to Government Official Portal"
+              className="px-2.5 py-1.5 rounded-lg bg-sky-50 dark:bg-sky-500/10 border border-sky-200 dark:border-sky-500/30 text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-500/20 transition-colors shadow-2xs flex items-center space-x-1.5 text-xs font-semibold"
+            >
+              <span>🏛️ Official Portal</span>
+            </button>
+
             {/* Logout Button */}
             <button
               onClick={onLogout}
