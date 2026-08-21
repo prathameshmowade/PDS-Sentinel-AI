@@ -808,4 +808,4 @@ export function initVantaClouds2(options = {}) {
 
   return new VantaClouds2(options);
 
-}145170195219251283299337362
+}

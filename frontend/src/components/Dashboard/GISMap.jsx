@@ -480,4 +480,4 @@ export default function GISMap({ fpsList = [], trucks = [], onSelectFPS, onSelec
 
   );
 
-}247279293331
+}

@@ -94,4 +94,4 @@ if __name__ == "__main__":
 
     import uvicorn
 
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)11211223344556677286100114128152177202226258306344372
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)

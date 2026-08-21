@@ -234,4 +234,4 @@ class DigitalTwinSimulator:
 
             }
 
-        return {"error": f"Unknown scenario type '{scenario_type}'"}163188213237269317355383
+        return {"error": f"Unknown scenario type '{scenario_type}'"}

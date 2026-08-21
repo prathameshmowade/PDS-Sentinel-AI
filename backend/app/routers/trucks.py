@@ -100,4 +100,4 @@ def update_truck_gps(truck_id: str, lat: Optional[float] = None, lng: Optional[f
 
     
 
-    return {"status": "SUCCESS", "updated_telemetry": truck}162187212236268316354382
+    return {"status": "SUCCESS", "updated_telemetry": truck}
