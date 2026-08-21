@@ -22,21 +22,15 @@ import {
 
 } from 'lucide-react';
 
-
-
 export default function AuditReportModal({ isOpen, onClose, stats, fpsList, alerts, trucks }) {
 
   if (!isOpen) return null;
-
-
 
   const printReport = () => {
 
     window.print();
 
   };
-
-
 
   const currentDate = new Date().toLocaleDateString('en-IN', {
 
@@ -47,8 +41,6 @@ export default function AuditReportModal({ isOpen, onClose, stats, fpsList, aler
     year: 'numeric'
 
   });
-
-
 
   return (
 
@@ -74,8 +66,6 @@ export default function AuditReportModal({ isOpen, onClose, stats, fpsList, aler
 
           </div>
 
-
-
           <div className="flex items-center space-x-2">
 
             <button
@@ -92,8 +82,6 @@ export default function AuditReportModal({ isOpen, onClose, stats, fpsList, aler
 
             </button>
 
-
-
             <button
 
               onClick={onClose}
@@ -109,8 +97,6 @@ export default function AuditReportModal({ isOpen, onClose, stats, fpsList, aler
           </div>
 
         </div>
-
-
 
         {/* Report Document Content */}
 
@@ -141,8 +127,6 @@ export default function AuditReportModal({ isOpen, onClose, stats, fpsList, aler
             </div>
 
           </div>
-
-
 
           {/* Executive Summary Metrics */}
 
@@ -191,8 +175,6 @@ export default function AuditReportModal({ isOpen, onClose, stats, fpsList, aler
             </div>
 
           </div>
-
-
 
           {/* Active Forensic Case Dossiers */}
 
@@ -243,8 +225,6 @@ export default function AuditReportModal({ isOpen, onClose, stats, fpsList, aler
             </div>
 
           </div>
-
-
 
           {/* Fair Price Shop Compliance Summary Table */}
 
@@ -306,8 +286,6 @@ export default function AuditReportModal({ isOpen, onClose, stats, fpsList, aler
 
           </div>
 
-
-
           {/* Official Sign-off block */}
 
           <div className="pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-between items-end text-[11px] font-mono text-slate-600 dark:text-slate-400">
@@ -332,11 +310,7 @@ export default function AuditReportModal({ isOpen, onClose, stats, fpsList, aler
 
           </div>
 
-
-
         </div>
-
-
 
       </div>
 

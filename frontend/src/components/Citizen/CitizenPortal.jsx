@@ -32,8 +32,6 @@ import {
 
 import { api } from '../../services/api';
 
-
-
 const TRANSLATIONS = {
 
   en: {
@@ -146,8 +144,6 @@ const TRANSLATIONS = {
 
 };
 
-
-
 const SAMPLE_VOICE_PROMPTS = {
 
   mr: [
@@ -176,8 +172,6 @@ const SAMPLE_VOICE_PROMPTS = {
 
 };
 
-
-
 export default function CitizenPortal({ fpsList = [] }) {
 
   const [lang, setLang] = useState('en');
@@ -196,11 +190,7 @@ export default function CitizenPortal({ fpsList = [] }) {
 
   const [isListening, setIsListening] = useState(false);
 
-
-
   const t = TRANSLATIONS[lang];
-
-
 
   const handleSearchCard = async (searchNo = null) => {
 
@@ -217,8 +207,6 @@ export default function CitizenPortal({ fpsList = [] }) {
     setLoading(false);
 
   };
-
-
 
   const handleVoiceRecord = () => {
 
@@ -240,8 +228,6 @@ export default function CitizenPortal({ fpsList = [] }) {
 
       recognition.start();
 
-
-
       recognition.onresult = (event) => {
 
         const transcript = event.results[0][0].transcript;
@@ -252,15 +238,11 @@ export default function CitizenPortal({ fpsList = [] }) {
 
       };
 
-
-
       recognition.onerror = () => {
 
         setIsListening(false);
 
       };
-
-
 
       recognition.onend = () => {
 
@@ -288,8 +270,6 @@ export default function CitizenPortal({ fpsList = [] }) {
 
   };
 
-
-
   const handleComplaintSubmit = async (e) => {
 
     e.preventDefault();
@@ -297,8 +277,6 @@ export default function CitizenPortal({ fpsList = [] }) {
     if (!complaintText.trim()) return;
 
     setIsSubmitting(true);
-
-
 
     const res = await api.submitGrievance({
 
@@ -314,8 +292,6 @@ export default function CitizenPortal({ fpsList = [] }) {
 
     });
 
-
-
     setIsSubmitting(false);
 
     if (res.status === 'SUCCESS') {
@@ -328,13 +304,9 @@ export default function CitizenPortal({ fpsList = [] }) {
 
   };
 
-
-
   const verifiedShops = fpsList.filter(f => f.trust_score >= 85.0).slice(0, 3);
 
   const voicePrompts = SAMPLE_VOICE_PROMPTS[lang] || SAMPLE_VOICE_PROMPTS.en;
-
-
 
   return (
 
@@ -361,8 +333,6 @@ export default function CitizenPortal({ fpsList = [] }) {
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{t.subtitle}</p>
 
           </div>
-
-
 
           {/* Clean Language Segmented Control */}
 
@@ -408,8 +378,6 @@ export default function CitizenPortal({ fpsList = [] }) {
 
         </div>
 
-
-
         {/* Search Ration Card */}
 
         <div className="mt-5 flex flex-col sm:flex-row gap-2">
@@ -450,8 +418,6 @@ export default function CitizenPortal({ fpsList = [] }) {
 
         </div>
 
-
-
         {/* Quick Sample Chips */}
 
         <div className="flex flex-wrap items-center gap-1.5 mt-2.5 text-[11px] text-slate-500 dark:text-slate-400">
@@ -486,8 +452,6 @@ export default function CitizenPortal({ fpsList = [] }) {
 
       </div>
 
-
-
       {/* Card Details View */}
 
       {cardData && (
@@ -514,8 +478,6 @@ export default function CitizenPortal({ fpsList = [] }) {
 
             </div>
 
-
-
             <div className="p-2.5 bg-slate-50 dark:bg-[#0b0e17] rounded-lg border border-slate-200 dark:border-slate-800 text-right">
 
               <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-mono">{t.familyMembers}</span>
@@ -525,8 +487,6 @@ export default function CitizenPortal({ fpsList = [] }) {
             </div>
 
           </div>
-
-
 
           {/* Assigned Shop Alert Banner if Flagged */}
 
@@ -547,8 +507,6 @@ export default function CitizenPortal({ fpsList = [] }) {
             </div>
 
           )}
-
-
 
           {/* Quota Breakdown */}
 
@@ -574,8 +532,6 @@ export default function CitizenPortal({ fpsList = [] }) {
 
               </div>
 
-
-
               <div className="p-3.5 rounded-lg bg-slate-50 dark:bg-[#0b0e17] border border-slate-200 dark:border-slate-800">
 
                 <span className="text-xs text-slate-500 dark:text-slate-400">{t.wheat}</span>
@@ -589,8 +545,6 @@ export default function CitizenPortal({ fpsList = [] }) {
                 <div className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 mt-1">Rate: ₹2.00 / KG</div>
 
               </div>
-
-
 
               <div className="p-3.5 rounded-lg bg-slate-50 dark:bg-[#0b0e17] border border-slate-200 dark:border-slate-800">
 
@@ -606,13 +560,9 @@ export default function CitizenPortal({ fpsList = [] }) {
 
               </div>
 
-
-
             </div>
 
           </div>
-
-
 
           {/* Nearby Verified Alternative Shops */}
 
@@ -631,8 +581,6 @@ export default function CitizenPortal({ fpsList = [] }) {
               <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400">Portability Active</span>
 
             </div>
-
-
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
 
@@ -676,13 +624,9 @@ export default function CitizenPortal({ fpsList = [] }) {
 
           </div>
 
-
-
         </div>
 
       )}
-
-
 
       {/* Multilingual Voice & Text AI Grievance Redressal Form */}
 
@@ -697,8 +641,6 @@ export default function CitizenPortal({ fpsList = [] }) {
             <p className="text-[11px] text-slate-500 dark:text-slate-400">{t.grievancePlaceholder}</p>
 
           </div>
-
-
 
           {/* Voice Input Mic Trigger */}
 
@@ -727,8 +669,6 @@ export default function CitizenPortal({ fpsList = [] }) {
           </button>
 
         </div>
-
-
 
         {/* Realistic Voice Test Chips */}
 
@@ -764,8 +704,6 @@ export default function CitizenPortal({ fpsList = [] }) {
 
         </div>
 
-
-
         <form onSubmit={handleComplaintSubmit} className="space-y-2.5">
 
           <textarea
@@ -782,8 +720,6 @@ export default function CitizenPortal({ fpsList = [] }) {
 
           />
 
-
-
           <div className="flex items-center justify-between">
 
             <div className="flex items-center space-x-1.5 text-[11px] text-slate-500 dark:text-slate-400">
@@ -793,8 +729,6 @@ export default function CitizenPortal({ fpsList = [] }) {
               <span>National PDS Helpline: 1967 (Toll Free)</span>
 
             </div>
-
-
 
             <button
 
@@ -815,8 +749,6 @@ export default function CitizenPortal({ fpsList = [] }) {
           </div>
 
         </form>
-
-
 
         {/* Complaint Result */}
 
@@ -847,8 +779,6 @@ export default function CitizenPortal({ fpsList = [] }) {
         )}
 
       </div>
-
-
 
     </div>
 

@@ -1,1756 +1,367 @@
 const API_BASE_URL = 'http://localhost:8000/api';
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export const api = {
-
-
-
-
-
-
-
 
   // Stats
 
-
-
-
-
-
-
-
   getStats: async () => {
 
-
-
-
-
-
-
-
     try {
-
-
-
-
-
-
-
 
       const res = await fetch(`${API_BASE_URL}/stats`);
 
-
-
-
-
-
-
-
       if (!res.ok) throw new Error('Network error');
-
-
-
-
-
-
-
 
       return await res.json();
 
-
-
-
-
-
-
-
     } catch (e) {
-
-
-
-
-
-
-
 
       console.warn('API fetch failed, returning fallback stats', e);
 
-
-
-
-
-
-
-
       return {
-
-
-
-
-
-
-
 
         district: "Nagpur Division (Pilot Hub)",
 
-
-
-
-
-
-
-
         state: "Maharashtra",
-
-
-
-
-
-
-
 
         total_fps_count: 8,
 
-
-
-
-
-
-
-
         high_risk_fps_count: 2,
-
-
-
-
-
-
-
 
         critical_fps_count: 1,
 
-
-
-
-
-
-
-
         verified_low_risk_fps_count: 5,
-
-
-
-
-
-
-
 
         avg_trust_score: 72.3,
 
-
-
-
-
-
-
-
         total_registered_beneficiaries: 11280,
-
-
-
-
-
-
-
 
         total_active_fleet_trucks: 4,
 
-
-
-
-
-
-
-
         trucks_in_route_breach: 1,
-
-
-
-
-
-
-
 
         total_monthly_quota_mt: 114.6,
 
-
-
-
-
-
-
-
         current_fps_stock_mt: 86.2,
-
-
-
-
-
-
-
 
         active_fraud_alerts_count: 3,
 
-
-
-
-
-
-
-
         total_grievances_count: 4,
-
-
-
-
-
-
-
 
         impact_metrics: {
 
-
-
-
-
-
-
-
           grain_saved_tons: 148.5,
-
-
-
-
-
-
-
 
           public_funds_protected_inr: 5940000,
 
-
-
-
-
-
-
-
           diversion_detection_accuracy_pct: 98.4,
-
-
-
-
-
-
-
 
           response_time_minutes: 4.5
 
-
-
-
-
-
-
-
         }
-
-
-
-
-
-
-
 
       };
 
-
-
-
-
-
-
-
     }
 
-
-
-
-
-
-
-
   },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   // Fair Price Shops
 
-
-
-
-
-
-
-
   getFPSList: async (riskFilter = null, search = '') => {
 
-
-
-
-
-
-
-
     try {
-
-
-
-
-
-
-
 
       const url = new URL(`${API_BASE_URL}/fps`);
 
-
-
-
-
-
-
-
       if (riskFilter) url.searchParams.append('risk_filter', riskFilter);
-
-
-
-
-
-
-
 
       if (search) url.searchParams.append('search', search);
 
-
-
-
-
-
-
-
       const res = await fetch(url.toString());
-
-
-
-
-
-
-
 
       if (!res.ok) throw new Error('Failed to fetch FPS');
 
-
-
-
-
-
-
-
       return await res.json();
 
-
-
-
-
-
-
-
     } catch (e) {
-
-
-
-
-
-
-
 
       console.warn('Fallback FPS list', e);
 
-
-
-
-
-
-
-
       return [];
-
-
-
-
-
-
-
 
     }
 
-
-
-
-
-
-
-
   },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   getFPSDetails: async (fpsId) => {
 
-
-
-
-
-
-
-
     try {
-
-
-
-
-
-
-
 
       const res = await fetch(`${API_BASE_URL}/fps/${fpsId}`);
 
-
-
-
-
-
-
-
       if (!res.ok) throw new Error('Failed to fetch FPS details');
-
-
-
-
-
-
-
 
       return await res.json();
 
-
-
-
-
-
-
-
     } catch (e) {
-
-
-
-
-
-
-
 
       console.warn('Fallback FPS detail', e);
 
-
-
-
-
-
-
-
       return null;
-
-
-
-
-
-
-
 
     }
 
-
-
-
-
-
-
-
   },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   getNearbyFPS: async (lat, lng, radiusKm = 15, verifiedOnly = false) => {
 
-
-
-
-
-
-
-
     try {
-
-
-
-
-
-
-
 
       const url = new URL(`${API_BASE_URL}/fps/nearby/search`);
 
-
-
-
-
-
-
-
       url.searchParams.append('lat', lat);
-
-
-
-
-
-
-
 
       url.searchParams.append('lng', lng);
 
-
-
-
-
-
-
-
       url.searchParams.append('radius_km', radiusKm);
-
-
-
-
-
-
-
 
       url.searchParams.append('verified_only', verifiedOnly);
 
-
-
-
-
-
-
-
       const res = await fetch(url.toString());
-
-
-
-
-
-
-
 
       if (!res.ok) throw new Error('Failed to fetch nearby FPS');
 
-
-
-
-
-
-
-
       return await res.json();
-
-
-
-
-
-
-
 
     } catch (e) {
 
-
-
-
-
-
-
-
       return [];
-
-
-
-
-
-
-
 
     }
 
-
-
-
-
-
-
-
   },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   // Trucks / Fleet
 
-
-
-
-
-
-
-
   getTrucks: async () => {
 
-
-
-
-
-
-
-
     try {
-
-
-
-
-
-
-
 
       const res = await fetch(`${API_BASE_URL}/trucks`);
 
-
-
-
-
-
-
-
       if (!res.ok) throw new Error('Failed to fetch trucks');
-
-
-
-
-
-
-
 
       return await res.json();
 
-
-
-
-
-
-
-
     } catch (e) {
-
-
-
-
-
-
-
 
       return [];
 
-
-
-
-
-
-
-
     }
 
-
-
-
-
-
-
-
   },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   // Alerts & AI Copilot Actions
 
-
-
-
-
-
-
-
   getAlerts: async () => {
 
-
-
-
-
-
-
-
     try {
-
-
-
-
-
-
-
 
       const res = await fetch(`${API_BASE_URL}/alerts`);
 
-
-
-
-
-
-
-
       if (!res.ok) throw new Error('Failed to fetch alerts');
-
-
-
-
-
-
-
 
       return await res.json();
 
-
-
-
-
-
-
-
     } catch (e) {
-
-
-
-
-
-
-
 
       return [];
 
-
-
-
-
-
-
-
     }
 
-
-
-
-
-
-
-
   },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   executeAlertAction: async (alertId, actionType, notes = '', squad = '') => {
 
-
-
-
-
-
-
-
     try {
-
-
-
-
-
-
-
 
       const res = await fetch(`${API_BASE_URL}/alerts/${alertId}/action`, {
 
-
-
-
-
-
-
-
         method: 'POST',
-
-
-
-
-
-
-
 
         headers: { 'Content-Type': 'application/json' },
 
-
-
-
-
-
-
-
         body: JSON.stringify({
-
-
-
-
-
-
-
 
           action_type: actionType,
 
-
-
-
-
-
-
-
           officer_notes: notes,
-
-
-
-
-
-
-
 
           assigned_squad_unit: squad
 
-
-
-
-
-
-
-
         })
-
-
-
-
-
-
-
 
       });
 
-
-
-
-
-
-
-
       return await res.json();
 
-
-
-
-
-
-
-
     } catch (e) {
-
-
-
-
-
-
-
 
       console.error('Execute action failed', e);
 
-
-
-
-
-
-
-
       return { status: 'ERROR', message: e.message };
-
-
-
-
-
-
-
 
     }
 
-
-
-
-
-
-
-
   },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   // AI Decision Copilot Chat
 
-
-
-
-
-
-
-
   askCopilot: async (query, userRole = "District Supply Officer") => {
 
-
-
-
-
-
-
-
     try {
-
-
-
-
-
-
-
 
       const res = await fetch(`${API_BASE_URL}/copilot/chat`, {
 
-
-
-
-
-
-
-
         method: 'POST',
 
-
-
-
-
-
-
-
         headers: { 'Content-Type': 'application/json' },
-
-
-
-
-
-
-
 
         body: JSON.stringify({
 
-
-
-
-
-
-
-
           query: query,
-
-
-
-
-
-
-
 
           user_role: userRole
 
-
-
-
-
-
-
-
         })
 
-
-
-
-
-
-
-
       });
-
-
-
-
-
-
-
 
       if (!res.ok) throw new Error('Failed to query Copilot API');
 
-
-
-
-
-
-
-
       return await res.json();
 
-
-
-
-
-
-
-
     } catch (e) {
-
-
-
-
-
-
-
 
       console.warn('Copilot backend offline, returning intelligent local response', e);
 
-
-
-
-
-
-
-
       return {
-
-
-
-
-
-
-
 
         reply: `### 🤖 PDS Decision Copilot Response:
 
-
-
-
-
-
-
-
 I have processed your query: **"${query}"**.
-
-
-
-
-
-
-
 
 - **District Telemetry**: 8 Fair Price Shops monitored.
 
-
-
-
-
-
-
-
 - **Active Anomalies**: FPS-4102 flagged with critical weighbridge shortfalls (-4.2 MT).
-
-
-
-
-
-
-
 
 - **Recommended Action**: Deploy Flying Squad and Freeze POS terminal.`,
 
-
-
-
-
-
-
-
         suggested_chips: [
-
-
-
-
-
-
-
 
           "Summarize active diversion threats in Nagpur",
 
-
-
-
-
-
-
-
           "Reallocate quota from FPS-4102 to verified backup",
-
-
-
-
-
-
-
 
           "Draft show-cause notice for flagged dealer"
 
-
-
-
-
-
-
-
         ]
-
-
-
-
-
-
-
 
       };
 
-
-
-
-
-
-
-
     }
 
-
-
-
-
-
-
-
   },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   // Citizen Portal
 
-
-
-
-
-
-
-
   getRationCard: async (cardNo) => {
 
-
-
-
-
-
-
-
     try {
-
-
-
-
-
-
-
 
       const res = await fetch(`${API_BASE_URL}/citizen/ration-card/${cardNo}`);
 
-
-
-
-
-
-
-
       if (!res.ok) throw new Error('Card not found');
-
-
-
-
-
-
-
 
       return await res.json();
 
-
-
-
-
-
-
-
     } catch (e) {
-
-
-
-
-
-
-
 
       return null;
 
-
-
-
-
-
-
-
     }
 
-
-
-
-
-
-
-
   },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   getGrievances: async (fpsId = null) => {
 
-
-
-
-
-
-
-
     try {
-
-
-
-
-
-
-
 
       const url = new URL(`${API_BASE_URL}/citizen/grievances`);
 
-
-
-
-
-
-
-
       if (fpsId) url.searchParams.append('fps_id', fpsId);
-
-
-
-
-
-
-
 
       const res = await fetch(url.toString());
 
-
-
-
-
-
-
-
       return await res.json();
 
-
-
-
-
-
-
-
     } catch (e) {
-
-
-
-
-
-
-
 
       return [];
 
-
-
-
-
-
-
-
     }
 
-
-
-
-
-
-
-
   },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   submitGrievance: async (data) => {
 
-
-
-
-
-
-
-
     try {
-
-
-
-
-
-
-
 
       const res = await fetch(`${API_BASE_URL}/citizen/grievances`, {
 
-
-
-
-
-
-
-
         method: 'POST',
 
-
-
-
-
-
-
-
         headers: { 'Content-Type': 'application/json' },
-
-
-
-
-
-
-
 
         body: JSON.stringify(data)
 
-
-
-
-
-
-
-
       });
-
-
-
-
-
-
-
 
       return await res.json();
 
-
-
-
-
-
-
-
     } catch (e) {
-
-
-
-
-
-
-
 
       return { status: 'ERROR', message: e.message };
 
-
-
-
-
-
-
-
     }
-
-
-
-
-
-
-
 
   },
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   // Digital Twin Simulation
-
-
-
-
-
-
-
 
   runSimulation: async (scenarioType) => {
 
-
-
-
-
-
-
-
     try {
-
-
-
-
-
-
-
 
       const res = await fetch(`${API_BASE_URL}/simulation/run`, {
 
-
-
-
-
-
-
-
         method: 'POST',
-
-
-
-
-
-
-
 
         headers: { 'Content-Type': 'application/json' },
 
-
-
-
-
-
-
-
         body: JSON.stringify({ scenario_type: scenarioType })
-
-
-
-
-
-
-
 
       });
 
-
-
-
-
-
-
-
       return await res.json();
-
-
-
-
-
-
-
 
     } catch (e) {
 
-
-
-
-
-
-
-
       return { status: 'ERROR', message: e.message };
-
-
-
-
-
-
-
 
     }
 
-
-
-
-
-
-
-
   }
-
-
-
-
-
-
-
 
 };147172197221253285301339364

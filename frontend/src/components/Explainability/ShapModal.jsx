@@ -16,13 +16,9 @@ import {
 
 } from 'lucide-react';
 
-
-
 export default function ShapModal({ alert, onClose, onExecuteAction }) {
 
   if (!alert) return null;
-
-
 
   const shapData = alert.shap_breakdown || {
 
@@ -36,8 +32,6 @@ export default function ShapModal({ alert, onClose, onExecuteAction }) {
 
   };
 
-
-
   const handleActionClick = (actionType) => {
 
     onExecuteAction(alert.id, actionType);
@@ -45,8 +39,6 @@ export default function ShapModal({ alert, onClose, onExecuteAction }) {
     onClose();
 
   };
-
-
 
   return (
 
@@ -86,8 +78,6 @@ export default function ShapModal({ alert, onClose, onExecuteAction }) {
 
           </div>
 
-
-
           <button
 
             onClick={onClose}
@@ -101,8 +91,6 @@ export default function ShapModal({ alert, onClose, onExecuteAction }) {
           </button>
 
         </div>
-
-
 
         {/* Content Body */}
 
@@ -136,8 +124,6 @@ export default function ShapModal({ alert, onClose, onExecuteAction }) {
 
           </div>
 
-
-
           {/* Explainable AI (SHAP) Feature Attribution */}
 
           <div>
@@ -156,8 +142,6 @@ export default function ShapModal({ alert, onClose, onExecuteAction }) {
 
             </div>
 
-
-
             <div className="space-y-2.5 bg-slate-50 dark:bg-[#080b12] p-3.5 rounded-lg border border-slate-200 dark:border-slate-800">
 
               {Object.entries(shapData).map(([featureKey, percentage]) => {
@@ -167,8 +151,6 @@ export default function ShapModal({ alert, onClose, onExecuteAction }) {
                   .replace(/_/g, ' ')
 
                   .replace(/\b\w/g, l => l.toUpperCase());
-
-
 
                 return (
 
@@ -204,8 +186,6 @@ export default function ShapModal({ alert, onClose, onExecuteAction }) {
 
           </div>
 
-
-
           {/* Multi-Source Evidence Chain */}
 
           <div>
@@ -217,8 +197,6 @@ export default function ShapModal({ alert, onClose, onExecuteAction }) {
               <span>Multi-Source Evidentiary Audit Trail</span>
 
             </h4>
-
-
 
             <div className="space-y-1.5">
 
@@ -244,8 +222,6 @@ export default function ShapModal({ alert, onClose, onExecuteAction }) {
 
           </div>
 
-
-
           {/* Recommended Enforcement Action */}
 
           <div className="p-3.5 rounded-lg bg-sky-50 dark:bg-[#0c1424] border border-sky-200 dark:border-sky-500/20">
@@ -266,11 +242,7 @@ export default function ShapModal({ alert, onClose, onExecuteAction }) {
 
           </div>
 
-
-
         </div>
-
-
 
         {/* Action Footer */}
 
@@ -290,8 +262,6 @@ export default function ShapModal({ alert, onClose, onExecuteAction }) {
 
             </button>
 
-
-
             <button
 
               onClick={() => handleActionClick('ORDER_SURPRISE_AUDIT')}
@@ -305,8 +275,6 @@ export default function ShapModal({ alert, onClose, onExecuteAction }) {
             </button>
 
           </div>
-
-
 
           <button
 
@@ -323,8 +291,6 @@ export default function ShapModal({ alert, onClose, onExecuteAction }) {
           </button>
 
         </div>
-
-
 
       </div>
 

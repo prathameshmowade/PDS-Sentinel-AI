@@ -28,13 +28,9 @@ import {
 
 import { api } from '../../services/api';
 
-
-
 export default function DecisionCopilotModal({ isOpen, onClose, onQuickAction, currentUser }) {
 
   if (!isOpen) return null;
-
-
 
   const [messages, setMessages] = useState([
 
@@ -47,8 +43,6 @@ export default function DecisionCopilotModal({ isOpen, onClose, onQuickAction, c
 **Workspace Authenticated**: ${currentUser?.name || 'District Supply Officer (DSO)'}
 
 **Jurisdiction**: Nagpur Division Hub-04
-
-
 
 I have indexed live multi-stream telemetry across **8 Fair Price Shops**, **4 GPS logistics trucks**, and **3 FCI Buffer Depots**. You can ask me any question or issue enforcement commands:`,
 
@@ -78,15 +72,11 @@ I have indexed live multi-stream telemetry across **8 Fair Price Shops**, **4 GP
 
   const [actionDoneMsg, setActionDoneMsg] = useState(null);
 
-
-
   const handleSend = async (textToSend = null) => {
 
     const query = textToSend || input;
 
     if (!query.trim()) return;
-
-
 
     const newMsgs = [...messages, { sender: 'user', text: query }];
 
@@ -97,8 +87,6 @@ I have indexed live multi-stream telemetry across **8 Fair Price Shops**, **4 GP
     setLoading(true);
 
     setActionDoneMsg(null);
-
-
 
     try {
 
@@ -158,8 +146,6 @@ I have indexed live multi-stream telemetry across **8 Fair Price Shops**, **4 GP
 
   };
 
-
-
   const handleExecuteAction = (actionType, payload) => {
 
     if (onQuickAction) {
@@ -187,8 +173,6 @@ I have indexed live multi-stream telemetry across **8 Fair Price Shops**, **4 GP
     }
 
   };
-
-
 
   return (
 
@@ -238,8 +222,6 @@ I have indexed live multi-stream telemetry across **8 Fair Price Shops**, **4 GP
 
           </div>
 
-
-
           <button
 
             onClick={onClose}
@@ -253,8 +235,6 @@ I have indexed live multi-stream telemetry across **8 Fair Price Shops**, **4 GP
           </button>
 
         </div>
-
-
 
         {/* Action Confirmation Banner */}
 
@@ -286,8 +266,6 @@ I have indexed live multi-stream telemetry across **8 Fair Price Shops**, **4 GP
 
         )}
 
-
-
         {/* Chat Stream */}
 
         <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 text-xs font-sans">
@@ -316,8 +294,6 @@ I have indexed live multi-stream telemetry across **8 Fair Price Shops**, **4 GP
 
                     </div>
 
-
-
                     {/* Interactive Enforcement Action Trigger Button if AI generated an action */}
 
                     {msg.action_type && (
@@ -343,8 +319,6 @@ I have indexed live multi-stream telemetry across **8 Fair Price Shops**, **4 GP
                     )}
 
                   </div>
-
-
 
                   {/* Quick Suggestion Chips */}
 
@@ -382,8 +356,6 @@ I have indexed live multi-stream telemetry across **8 Fair Price Shops**, **4 GP
 
           ))}
 
-
-
           {loading && (
 
             <div className="flex items-center space-x-2 text-slate-500 text-xs pl-8 font-mono">
@@ -397,8 +369,6 @@ I have indexed live multi-stream telemetry across **8 Fair Price Shops**, **4 GP
           )}
 
         </div>
-
-
 
         {/* Input Bar */}
 
@@ -449,8 +419,6 @@ I have indexed live multi-stream telemetry across **8 Fair Price Shops**, **4 GP
           </form>
 
         </div>
-
-
 
       </div>
 

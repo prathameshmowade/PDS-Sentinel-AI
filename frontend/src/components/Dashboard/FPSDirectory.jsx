@@ -20,15 +20,11 @@ import {
 
 } from 'lucide-react';
 
-
-
 export default function FPSDirectory({ fpsList = [], onSelectFPS }) {
 
   const [search, setSearch] = useState('');
 
   const [riskFilter, setRiskFilter] = useState('ALL');
-
-
 
   const filtered = fpsList.filter(fps => {
 
@@ -42,17 +38,11 @@ export default function FPSDirectory({ fpsList = [], onSelectFPS }) {
 
       fps.address.toLowerCase().includes(search.toLowerCase());
 
-
-
     const matchesRisk = riskFilter === 'ALL' || fps.risk_level === riskFilter;
-
-
 
     return matchesSearch && matchesRisk;
 
   });
-
-
 
   const handleExportCSV = () => {
 
@@ -73,8 +63,6 @@ export default function FPSDirectory({ fpsList = [], onSelectFPS }) {
     a.click();
 
   };
-
-
 
   return (
 
@@ -104,8 +92,6 @@ export default function FPSDirectory({ fpsList = [], onSelectFPS }) {
 
         </div>
 
-
-
         {/* Search, Filter & Export */}
 
         <div className="flex flex-wrap items-center gap-2">
@@ -130,8 +116,6 @@ export default function FPSDirectory({ fpsList = [], onSelectFPS }) {
 
           </div>
 
-
-
           <select
 
             value={riskFilter}
@@ -154,8 +138,6 @@ export default function FPSDirectory({ fpsList = [], onSelectFPS }) {
 
           </select>
 
-
-
           <button
 
             onClick={handleExportCSV}
@@ -173,8 +155,6 @@ export default function FPSDirectory({ fpsList = [], onSelectFPS }) {
         </div>
 
       </div>
-
-
 
       {/* Dense Table */}
 
@@ -214,15 +194,11 @@ export default function FPSDirectory({ fpsList = [], onSelectFPS }) {
 
               const isLow = fps.risk_level === 'LOW';
 
-
-
               let scoreBg = 'bg-emerald-500';
 
               if (isCrit) scoreBg = 'bg-rose-500';
 
               else if (isHigh || fps.risk_level === 'MEDIUM') scoreBg = 'bg-amber-500';
-
-
 
               return (
 
@@ -250,8 +226,6 @@ export default function FPSDirectory({ fpsList = [], onSelectFPS }) {
 
                   </td>
 
-
-
                   {/* Trust Score */}
 
                   <td className="py-3 px-3">
@@ -275,8 +249,6 @@ export default function FPSDirectory({ fpsList = [], onSelectFPS }) {
                     </div>
 
                   </td>
-
-
 
                   {/* Risk Badge */}
 
@@ -306,8 +278,6 @@ export default function FPSDirectory({ fpsList = [], onSelectFPS }) {
 
                   </td>
 
-
-
                   {/* Stock */}
 
                   <td className="py-3 px-3 font-mono text-[11px]">
@@ -317,8 +287,6 @@ export default function FPSDirectory({ fpsList = [], onSelectFPS }) {
                     <div className="text-slate-500 dark:text-slate-400 text-[10px]">Wheat: {fps.current_stock_mt?.wheat} MT</div>
 
                   </td>
-
-
 
                   {/* Hardware */}
 
@@ -336,8 +304,6 @@ export default function FPSDirectory({ fpsList = [], onSelectFPS }) {
 
                   </td>
 
-
-
                   {/* Status */}
 
                   <td className="py-3 px-3">
@@ -349,8 +315,6 @@ export default function FPSDirectory({ fpsList = [], onSelectFPS }) {
                     </span>
 
                   </td>
-
-
 
                   {/* Action */}
 
@@ -372,8 +336,6 @@ export default function FPSDirectory({ fpsList = [], onSelectFPS }) {
 
                   </td>
 
-
-
                 </tr>
 
               );
@@ -385,8 +347,6 @@ export default function FPSDirectory({ fpsList = [], onSelectFPS }) {
         </table>
 
       </div>
-
-
 
     </div>
 

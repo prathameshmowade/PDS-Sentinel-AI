@@ -22,8 +22,6 @@ import {
 
 import { api } from '../../services/api';
 
-
-
 const SCENARIOS = [
 
   {
@@ -70,8 +68,6 @@ const SCENARIOS = [
 
 ];
 
-
-
 export default function Simulator({ onSimulationComplete }) {
 
   const [selectedScenario, setSelectedScenario] = useState("DIVERSION_FLOUR_MILL");
@@ -79,8 +75,6 @@ export default function Simulator({ onSimulationComplete }) {
   const [isRunning, setIsRunning] = useState(false);
 
   const [simulationResult, setSimulationResult] = useState(null);
-
-
 
   const handleRunSimulation = async (scenarioId = null) => {
 
@@ -94,13 +88,9 @@ export default function Simulator({ onSimulationComplete }) {
 
     setSimulationResult(res);
 
-
-
     if (onSimulationComplete) onSimulationComplete();
 
   };
-
-
 
   return (
 
@@ -136,8 +126,6 @@ export default function Simulator({ onSimulationComplete }) {
 
           </div>
 
-
-
           <button
 
             onClick={() => handleRunSimulation("RESET_NORMAL")}
@@ -153,8 +141,6 @@ export default function Simulator({ onSimulationComplete }) {
           </button>
 
         </div>
-
-
 
         {/* Scenario Selection Grid */}
 
@@ -208,8 +194,6 @@ export default function Simulator({ onSimulationComplete }) {
 
         </div>
 
-
-
         {/* Launch Button */}
 
         <div className="mt-5 flex justify-end">
@@ -232,11 +216,7 @@ export default function Simulator({ onSimulationComplete }) {
 
         </div>
 
-
-
       </div>
-
-
 
       {/* Simulation Results Matrix */}
 
@@ -263,8 +243,6 @@ export default function Simulator({ onSimulationComplete }) {
             </span>
 
           </div>
-
-
 
           {/* Side-by-Side Impact Comparison */}
 
@@ -324,8 +302,6 @@ export default function Simulator({ onSimulationComplete }) {
 
             </div>
 
-
-
             {/* With PDS Sentinel AI */}
 
             <div className="p-4 rounded-lg bg-emerald-50/50 dark:bg-[#0e1d17] border border-emerald-200 dark:border-emerald-900/60 space-y-2.5">
@@ -337,8 +313,6 @@ export default function Simulator({ onSimulationComplete }) {
                 <span>PDS Sentinel AI (Autonomous Decision Engine)</span>
 
               </div>
-
-
 
               <div className="space-y-1.5 text-xs">
 
@@ -378,11 +352,7 @@ export default function Simulator({ onSimulationComplete }) {
 
             </div>
 
-
-
           </div>
-
-
 
           {/* Autonomous Actions Timeline */}
 
@@ -395,8 +365,6 @@ export default function Simulator({ onSimulationComplete }) {
               <span>Automated Autonomous Countermeasures Executed</span>
 
             </h4>
-
-
 
             <div className="space-y-1.5">
 
@@ -416,13 +384,9 @@ export default function Simulator({ onSimulationComplete }) {
 
           </div>
 
-
-
         </div>
 
       )}
-
-
 
     </div>
 

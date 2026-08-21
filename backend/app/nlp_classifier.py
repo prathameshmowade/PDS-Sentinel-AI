@@ -1,777 +1,179 @@
 """
 
-
-
-
-
-
-
 Multilingual Grievance Redressal NLP Classifier for PDS Sentinel AI.
-
-
-
-
-
-
 
 Supports English, Hindi (हिंदी), and Marathi (मराठी).
 
-
-
-
-
-
-
 Classifies citizen complaints into severity, category, and sentiment.
-
-
-
-
-
-
 
 """
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import re
-
-
-
-
-
-
 
 from typing import Dict, Any
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 class GrievanceNLPClassifier:
-
-
-
-
-
-
 
     CATEGORY_KEYWORDS = {
 
-
-
-
-
-
-
         "STOCK_DIVERSION": {
-
-
-
-
-
-
 
             "en": ["black market", "divert", "diversion", "mill", "selling outside", "stolen", "truck night", "empty store", "grain finished early", "sold illegally"],
 
-
-
-
-
-
-
             "hi": ["काला बाजारी", "कालाबाजारी", "बाहर बेच", "मिल", "ट्रक", "राशन खत्म", "चोरी", "अवैध", "राशन बेच दिया"],
-
-
-
-
-
-
 
             "mr": ["काळाबाजार", "बाहेर विकले", "खासगी गिरणी", "ट्रक", "धान्य संपले", "चोरी", "धान्य हडपले", "रातोरात धान्य गायब"]
 
-
-
-
-
-
-
         },
-
-
-
-
-
-
 
         "BIOMETRIC_DENIAL": {
 
-
-
-
-
-
-
             "en": ["biometric", "fingerprint", "thumb", "iris", "server down", "otp", "machine not working", "denied ration", "card not scanning"],
-
-
-
-
-
-
 
             "hi": ["फिंगरप्रिंट", "अंगूठा", "सर्वर डाउन", "मशीन खराब", "ओटीपी", "राशन देने से मना", "बायोमेट्रिक"],
 
-
-
-
-
-
-
             "mr": ["अंगठा", "फिंगरप्रिंट", "सर्व्हर डाऊन", "बायोमेट्रिक", "मशीन बंद", "धान्य नाकारले"]
 
-
-
-
-
-
-
         },
-
-
-
-
-
-
 
         "UNDER_WEIGHING": {
 
-
-
-
-
-
-
             "en": ["less weight", "scale tamper", "short weight", "electronic scale", "grams less", "weighed 4kg instead of 5kg", "underweighing"],
-
-
-
-
-
-
 
             "hi": ["कम तोल", "वजन कम", "कांटा खराब", "कम नाप", "4 किलो दिया 5 की जगह"],
 
-
-
-
-
-
-
             "mr": ["कमी वजन", "काट्यात फेरफार", "कमी धान्य मोजले", "५ किलो ऐवजी ४ किलो"]
 
-
-
-
-
-
-
         },
-
-
-
-
-
-
 
         "OVER_CHARGING": {
 
-
-
-
-
-
-
             "en": ["extra money", "overcharge", "demanding money", "bribe", "more than govt rate", "charged extra"],
-
-
-
-
-
-
 
             "hi": ["ज्यादा पैसे", "अधिक रुपए", "रिश्वत", "सरकारी दर से ज्यादा", "अतिरिक्त पैसे मांगे"],
 
-
-
-
-
-
-
             "mr": ["जास्त पैसे", "लाच", "शासकीय दरापेक्षा जास्त", "अतिरिक्त शुल्क"]
-
-
-
-
-
-
 
         },
 
-
-
-
-
-
-
         "SHOP_CLOSED": {
-
-
-
-
-
-
 
             "en": ["shop closed", "never open", "dealer absent", "irregular hours", "shut during working hours"],
 
-
-
-
-
-
-
             "hi": ["दुकान बंद", "डीलर गायब", "समय पर नहीं खुलती", "ताला लगा रहता है"],
-
-
-
-
-
-
 
             "mr": ["दुकान बंद", "दुकानदार गैरहजर", "वेळेवर उघडत नाही", "नेहमी कुलूप"]
 
-
-
-
-
-
-
         }
-
-
-
-
-
-
 
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @classmethod
-
-
-
-
-
-
 
     def classify(cls, text: str, declared_lang: str = "auto") -> Dict[str, Any]:
 
-
-
-
-
-
-
         text_lower = text.lower()
 
-
-
-
-
-
-
         
-
-
-
-
-
-
 
         # Simple language detection heuristic if auto
 
-
-
-
-
-
-
         detected_lang = declared_lang
-
-
-
-
-
-
 
         if declared_lang == "auto":
 
-
-
-
-
-
-
             if any('\u0900' <= char <= '\u097F' for char in text):
-
-
-
-
-
-
 
                 # Devanagari script - distinguish Marathi vs Hindi keywords
 
-
-
-
-
-
-
                 if any(w in text_lower for w in ["आहे", "नाही", "मिळाले", "दुकानदार", "सांगतो", "केले"]):
-
-
-
-
-
-
 
                     detected_lang = "mr"
 
-
-
-
-
-
-
                 else:
-
-
-
-
-
-
 
                     detected_lang = "hi"
 
-
-
-
-
-
-
             else:
-
-
-
-
-
-
 
                 detected_lang = "en"
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         # Match category scores
-
-
-
-
-
-
 
         category_scores = {}
 
-
-
-
-
-
-
         for cat, lang_dict in cls.CATEGORY_KEYWORDS.items():
-
-
-
-
-
-
 
             score = 0
 
-
-
-
-
-
-
             for lang, keywords in lang_dict.items():
-
-
-
-
-
-
 
                 for kw in keywords:
 
-
-
-
-
-
-
                     if kw in text_lower:
-
-
-
-
-
-
 
                         score += 2 if lang == detected_lang else 1
 
-
-
-
-
-
-
             category_scores[cat] = score
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         best_cat = max(category_scores, key=category_scores.get)
 
-
-
-
-
-
-
         if category_scores[best_cat] == 0:
-
-
-
-
-
-
 
             best_cat = "GENERAL_INQUIRY"
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         # Sentiment Analysis
-
-
-
-
-
-
 
         negative_indicators = ["not", "never", "denied", "cheat", "scam", "down", "नाही", "नाकारले", "खराब", "कमी", "लूट", "धोका", "नहीं", "मना", "गलत"]
 
-
-
-
-
-
-
         positive_indicators = ["good", "thanks", "excellent", "timely", "चांगले", "वेळेवर", "धन्यवाद", "उत्कृष्ट", "अच्छा", "सही समय"]
-
-
-
-
-
-
 
         
 
-
-
-
-
-
-
         neg_count = sum(1 for w in negative_indicators if w in text_lower)
-
-
-
-
-
-
 
         pos_count = sum(1 for w in positive_indicators if w in text_lower)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         if pos_count > neg_count:
-
-
-
-
-
-
 
             sentiment = "POSITIVE"
 
-
-
-
-
-
-
             urgency = "LOW"
-
-
-
-
-
-
 
             if best_cat == "GENERAL_INQUIRY":
 
-
-
-
-
-
-
                 best_cat = "APPRECIATION_FEEDBACK"
-
-
-
-
-
-
 
         elif best_cat in ["STOCK_DIVERSION", "BIOMETRIC_DENIAL"]:
 
-
-
-
-
-
-
             sentiment = "NEGATIVE"
-
-
-
-
-
-
 
             urgency = "HIGH"
 
-
-
-
-
-
-
         elif best_cat in ["UNDER_WEIGHING", "OVER_CHARGING"]:
-
-
-
-
-
-
 
             sentiment = "NEGATIVE"
 
-
-
-
-
-
-
             urgency = "MEDIUM"
-
-
-
-
-
-
 
         else:
 
-
-
-
-
-
-
             sentiment = "NEUTRAL"
-
-
-
-
-
-
 
             urgency = "MEDIUM"
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         return {
-
-
-
-
-
-
 
             "detected_language": detected_lang,
 
-
-
-
-
-
-
             "category": best_cat,
-
-
-
-
-
-
 
             "sentiment": sentiment,
 
-
-
-
-
-
-
             "urgency": urgency,
-
-
-
-
-
-
 
             "confidence_score": 0.94 if category_scores.get(best_cat, 0) > 0 else 0.72,
 
-
-
-
-
-
-
             "requires_mste_cross_verification": best_cat in ["STOCK_DIVERSION", "BIOMETRIC_DENIAL", "UNDER_WEIGHING"]
-
-
-
-
-
-
 
         }155180205229261309347375

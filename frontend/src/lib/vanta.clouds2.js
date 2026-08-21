@@ -1,4069 +1,811 @@
 import * as THREE from 'three';
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Vanta.js CLOUDS2 WebGL volumetric shader effect
-
-
-
-
-
-
-
 
 export function initVantaClouds2(options = {}) {
 
-
-
-
-
-
-
-
   // Ensure window.THREE is available
-
-
-
-
-
-
-
 
   if (typeof window !== 'undefined') {
 
-
-
-
-
-
-
-
     window.THREE = THREE;
 
-
-
-
-
-
-
-
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   Number.prototype.clamp = function (e, t) {
 
-
-
-
-
-
-
-
     return Math.min(Math.max(this, e), t);
 
-
-
-
-
-
-
-
   };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   function disposeNode(e) {
 
-
-
-
-
-
-
-
     for (; e.children && e.children.length > 0;) {
-
-
-
-
-
-
-
 
       disposeNode(e.children[0]);
 
-
-
-
-
-
-
-
       e.remove(e.children[0]);
 
-
-
-
-
-
-
-
     }
-
-
-
-
-
-
-
 
     if (e.geometry) e.geometry.dispose();
 
-
-
-
-
-
-
-
     if (e.material) {
-
-
-
-
-
-
-
 
       Object.keys(e.material).forEach(t => {
 
-
-
-
-
-
-
-
         if (e.material[t] && typeof e.material[t].dispose === 'function') {
-
-
-
-
-
-
-
 
           e.material[t].dispose();
 
-
-
-
-
-
-
-
         }
 
-
-
-
-
-
-
-
       });
-
-
-
-
-
-
-
 
       e.material.dispose();
 
-
-
-
-
-
-
-
     }
 
-
-
-
-
-
-
-
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   const hasWindow = typeof window !== 'undefined';
 
-
-
-
-
-
-
-
   let o = THREE;
-
-
-
-
-
-
-
 
   if (hasWindow && !window.VANTA) window.VANTA = {};
 
-
-
-
-
-
-
-
   const n = (hasWindow && window.VANTA) || {};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   n.VantaBase = class {
 
-
-
-
-
-
-
-
     constructor(e = {}) {
-
-
-
-
-
-
-
 
       if (!hasWindow) return false;
 
-
-
-
-
-
-
-
       n.current = this;
-
-
-
-
-
-
-
 
       this.windowMouseMoveWrapper = this.windowMouseMoveWrapper.bind(this);
 
-
-
-
-
-
-
-
       this.windowTouchWrapper = this.windowTouchWrapper.bind(this);
-
-
-
-
-
-
-
 
       this.windowGyroWrapper = this.windowGyroWrapper.bind(this);
 
-
-
-
-
-
-
-
       this.resize = this.resize.bind(this);
-
-
-
-
-
-
-
 
       this.animationLoop = this.animationLoop.bind(this);
 
-
-
-
-
-
-
-
       this.restart = this.restart.bind(this);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
       const t = typeof this.getDefaultOptions === 'function' ? this.getDefaultOptions() : this.defaultOptions;
 
-
-
-
-
-
-
-
       this.options = Object.assign(
-
-
-
-
-
-
-
 
         {
 
-
-
-
-
-
-
-
           mouseControls: true,
-
-
-
-
-
-
-
 
           touchControls: true,
 
-
-
-
-
-
-
-
           gyroControls: false,
-
-
-
-
-
-
-
 
           minHeight: 200,
 
-
-
-
-
-
-
-
           minWidth: 200,
-
-
-
-
-
-
-
 
           scale: 1,
 
-
-
-
-
-
-
-
           scaleMobile: 1
-
-
-
-
-
-
-
 
         },
 
-
-
-
-
-
-
-
         t
-
-
-
-
-
-
-
 
       );
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       if (e instanceof HTMLElement || typeof e === 'string') e = { el: e };
 
-
-
-
-
-
-
-
       Object.assign(this.options, e);
-
-
-
-
-
-
-
 
       if (this.options.THREE) o = this.options.THREE;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       this.el = this.options.el;
-
-
-
-
-
-
-
 
       if (!this.el) {
 
-
-
-
-
-
-
-
         console.error('[VANTA] Instance needs "el" param!');
-
-
-
-
-
-
-
 
         return;
 
-
-
-
-
-
-
-
       }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
       if (!(this.options.el instanceof HTMLElement)) {
 
-
-
-
-
-
-
-
         const found = document.querySelector(this.el);
-
-
-
-
-
-
-
 
         if (!found) {
 
-
-
-
-
-
-
-
           console.error('[VANTA] Cannot find element', this.el);
-
-
-
-
-
-
-
 
           return;
 
-
-
-
-
-
-
-
         }
-
-
-
-
-
-
-
 
         this.el = found;
 
-
-
-
-
-
-
-
       }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
       this.prepareEl();
 
-
-
-
-
-
-
-
       this.initThree();
 
-
-
-
-
-
-
-
       this.setSize();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
       try {
 
-
-
-
-
-
-
-
         this.init();
-
-
-
-
-
-
-
 
       } catch (err) {
 
-
-
-
-
-
-
-
         console.error('[VANTA] Init error', err);
-
-
-
-
-
-
-
 
         if (this.renderer && this.renderer.domElement) {
 
-
-
-
-
-
-
-
           this.el.removeChild(this.renderer.domElement);
 
-
-
-
-
-
-
-
         }
-
-
-
-
-
-
-
 
         return;
 
-
-
-
-
-
-
-
       }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
       this.initMouse();
 
-
-
-
-
-
-
-
       this.resize();
-
-
-
-
-
-
-
 
       this.animationLoop();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       window.addEventListener('resize', this.resize);
-
-
-
-
-
-
-
 
       window.requestAnimationFrame(this.resize);
 
-
-
-
-
-
-
-
       if (this.options.mouseControls) {
-
-
-
-
-
-
-
 
         window.addEventListener('scroll', this.windowMouseMoveWrapper);
 
-
-
-
-
-
-
-
         window.addEventListener('mousemove', this.windowMouseMoveWrapper);
 
-
-
-
-
-
-
-
       }
-
-
-
-
-
-
-
 
       if (this.options.touchControls) {
 
-
-
-
-
-
-
-
         window.addEventListener('touchstart', this.windowTouchWrapper);
-
-
-
-
-
-
-
 
         window.addEventListener('touchmove', this.windowTouchWrapper);
 
-
-
-
-
-
-
-
       }
 
-
-
-
-
-
-
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     setOptions(e = {}) {
 
-
-
-
-
-
-
-
       Object.assign(this.options, e);
-
-
-
-
-
-
-
 
       this.triggerMouseMove();
 
-
-
-
-
-
-
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     prepareEl() {
 
-
-
-
-
-
-
-
       if (getComputedStyle(this.el).position === 'static') {
-
-
-
-
-
-
-
 
         this.el.style.position = 'relative';
 
-
-
-
-
-
-
-
       }
 
-
-
-
-
-
-
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     applyCanvasStyles(e, t = {}) {
 
-
-
-
-
-
-
-
       Object.assign(e.style, {
-
-
-
-
-
-
-
 
         position: 'absolute',
 
-
-
-
-
-
-
-
         zIndex: 0,
-
-
-
-
-
-
-
 
         top: 0,
 
-
-
-
-
-
-
-
         left: 0,
-
-
-
-
-
-
-
 
         width: '100%',
 
-
-
-
-
-
-
-
         height: '100%',
-
-
-
-
-
-
-
 
         background: ''
 
-
-
-
-
-
-
-
       });
-
-
-
-
-
-
-
 
       Object.assign(e.style, t);
 
-
-
-
-
-
-
-
       e.classList.add('vanta-canvas');
 
-
-
-
-
-
-
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     initThree() {
 
-
-
-
-
-
-
-
       if (o.WebGLRenderer) {
-
-
-
-
-
-
-
 
         this.renderer = new o.WebGLRenderer({ alpha: true, antialias: true });
 
-
-
-
-
-
-
-
         this.el.appendChild(this.renderer.domElement);
-
-
-
-
-
-
-
 
         this.applyCanvasStyles(this.renderer.domElement);
 
-
-
-
-
-
-
-
         if (isNaN(this.options.backgroundAlpha)) this.options.backgroundAlpha = 1;
-
-
-
-
-
-
-
 
         this.scene = new o.Scene();
 
-
-
-
-
-
-
-
       } else {
-
-
-
-
-
-
-
 
         console.warn('[VANTA] No THREE defined');
 
-
-
-
-
-
-
-
       }
 
-
-
-
-
-
-
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     getCanvasElement() {
 
-
-
-
-
-
-
-
       return this.renderer ? this.renderer.domElement : void 0;
 
-
-
-
-
-
-
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     getCanvasRect() {
 
-
-
-
-
-
-
-
       const e = this.getCanvasElement();
-
-
-
-
-
-
-
 
       return !!e && e.getBoundingClientRect();
 
-
-
-
-
-
-
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     windowMouseMoveWrapper(e) {
 
-
-
-
-
-
-
-
       const t = this.getCanvasRect();
 
-
-
-
-
-
-
-
       if (!t) return false;
-
-
-
-
-
-
-
 
       const i = e.clientX - t.left;
 
-
-
-
-
-
-
-
       const s = e.clientY - t.top;
-
-
-
-
-
-
-
 
       if (i >= 0 && s >= 0 && i <= t.width && s <= t.height) {
 
-
-
-
-
-
-
-
         this.mouseX = i;
-
-
-
-
-
-
-
 
         this.mouseY = s;
 
-
-
-
-
-
-
-
         if (!this.options.mouseEase) this.triggerMouseMove(i, s);
-
-
-
-
-
-
-
 
       }
 
-
-
-
-
-
-
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     windowTouchWrapper(e) {
 
-
-
-
-
-
-
-
       const t = this.getCanvasRect();
 
-
-
-
-
-
-
-
       if (!t) return false;
-
-
-
-
-
-
-
 
       if (e.touches.length === 1) {
 
-
-
-
-
-
-
-
         const i = e.touches[0].clientX - t.left;
-
-
-
-
-
-
-
 
         const s = e.touches[0].clientY - t.top;
 
-
-
-
-
-
-
-
         if (i >= 0 && s >= 0 && i <= t.width && s <= t.height) {
-
-
-
-
-
-
-
 
           this.mouseX = i;
 
-
-
-
-
-
-
-
           this.mouseY = s;
-
-
-
-
-
-
-
 
           if (!this.options.mouseEase) this.triggerMouseMove(i, s);
 
-
-
-
-
-
-
-
         }
-
-
-
-
-
-
-
 
       }
 
-
-
-
-
-
-
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     windowGyroWrapper(e) {
 
-
-
-
-
-
-
-
       const t = this.getCanvasRect();
-
-
-
-
-
-
-
 
       if (!t) return false;
 
-
-
-
-
-
-
-
       const i = Math.round(2 * e.alpha) - t.left;
-
-
-
-
-
-
-
 
       const s = Math.round(2 * e.beta) - t.top;
 
-
-
-
-
-
-
-
       if (i >= 0 && s >= 0 && i <= t.width && s <= t.height) {
-
-
-
-
-
-
-
 
         this.mouseX = i;
 
-
-
-
-
-
-
-
         this.mouseY = s;
-
-
-
-
-
-
-
 
         if (!this.options.mouseEase) this.triggerMouseMove(i, s);
 
-
-
-
-
-
-
-
       }
 
-
-
-
-
-
-
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     triggerMouseMove(e, t) {
 
-
-
-
-
-
-
-
       if (e === undefined && t === undefined) {
-
-
-
-
-
-
-
 
         if (this.options.mouseEase) {
 
-
-
-
-
-
-
-
           e = this.mouseEaseX;
-
-
-
-
-
-
-
 
           t = this.mouseEaseY;
 
-
-
-
-
-
-
-
         } else {
-
-
-
-
-
-
-
 
           e = this.mouseX;
 
-
-
-
-
-
-
-
           t = this.mouseY;
-
-
-
-
-
-
-
 
         }
 
-
-
-
-
-
-
-
       }
-
-
-
-
-
-
-
 
       if (this.uniforms) {
 
-
-
-
-
-
-
-
         this.uniforms.iMouse.value.x = e / this.scale;
-
-
-
-
-
-
-
 
         this.uniforms.iMouse.value.y = t / this.scale;
 
-
-
-
-
-
-
-
       }
-
-
-
-
-
-
-
 
       const i = e / this.width;
 
-
-
-
-
-
-
-
       const s = t / this.height;
-
-
-
-
-
-
-
 
       if (typeof this.onMouseMove === 'function') this.onMouseMove(i, s);
 
-
-
-
-
-
-
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     setSize() {
 
-
-
-
-
-
-
-
       if (!this.scale) this.scale = 1;
-
-
-
-
-
-
-
 
       if (
 
-
-
-
-
-
-
-
         typeof navigator !== 'undefined' &&
-
-
-
-
-
-
-
 
         (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 600) &&
 
-
-
-
-
-
-
-
         this.options.scaleMobile
-
-
-
-
-
-
-
 
       ) {
 
-
-
-
-
-
-
-
         this.scale = this.options.scaleMobile;
-
-
-
-
-
-
-
 
       } else if (this.options.scale) {
 
-
-
-
-
-
-
-
         this.scale = this.options.scale;
 
-
-
-
-
-
-
-
       }
-
-
-
-
-
-
-
 
       this.width = Math.max(this.el.offsetWidth || window.innerWidth, this.options.minWidth);
 
-
-
-
-
-
-
-
       this.height = Math.max(this.el.offsetHeight || window.innerHeight, this.options.minHeight);
 
-
-
-
-
-
-
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     initMouse() {
 
-
-
-
-
-
-
-
       if ((!this.mouseX && !this.mouseY) || (this.mouseX === this.options.minWidth / 2 && this.mouseY === this.options.minHeight / 2)) {
-
-
-
-
-
-
-
 
         this.mouseX = this.width / 2;
 
-
-
-
-
-
-
-
         this.mouseY = this.height / 2;
-
-
-
-
-
-
-
 
         this.triggerMouseMove(this.mouseX, this.mouseY);
 
-
-
-
-
-
-
-
       }
-
-
-
-
-
-
-
 
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     resize() {
-
-
-
-
-
-
-
 
       this.setSize();
 
-
-
-
-
-
-
-
       if (this.camera) {
-
-
-
-
-
-
-
 
         this.camera.aspect = this.width / this.height;
 
-
-
-
-
-
-
-
         if (typeof this.camera.updateProjectionMatrix === 'function') {
-
-
-
-
-
-
-
 
           this.camera.updateProjectionMatrix();
 
-
-
-
-
-
-
-
         }
-
-
-
-
-
-
-
 
       }
 
-
-
-
-
-
-
-
       if (this.renderer) {
-
-
-
-
-
-
-
 
         this.renderer.setSize(this.width, this.height);
 
-
-
-
-
-
-
-
         this.renderer.setPixelRatio(window.devicePixelRatio / this.scale);
 
-
-
-
-
-
-
-
       }
-
-
-
-
-
-
-
 
       if (typeof this.onResize === 'function') this.onResize();
 
-
-
-
-
-
-
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     isOnScreen() {
 
-
-
-
-
-
-
-
       return true;
 
-
-
-
-
-
-
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     animationLoop() {
 
-
-
-
-
-
-
-
       if (!this.t) this.t = 0;
-
-
-
-
-
-
-
 
       if (!this.t2) this.t2 = 0;
 
-
-
-
-
-
-
-
       const e = performance.now();
-
-
-
-
-
-
-
 
       if (this.prevNow) {
 
-
-
-
-
-
-
-
         let t = (e - this.prevNow) / (1e3 / 60);
-
-
-
-
-
-
-
 
         t = Math.max(0.2, Math.min(t, 5));
 
-
-
-
-
-
-
-
         this.t += t;
-
-
-
-
-
-
-
 
         this.t2 += (this.options.speed || 1) * t;
 
-
-
-
-
-
-
-
         if (this.uniforms) {
-
-
-
-
-
-
-
 
           this.uniforms.iTime.value = 0.016667 * this.t2;
 
-
-
-
-
-
-
-
         }
 
-
-
-
-
-
-
-
       }
-
-
-
-
-
-
-
 
       this.prevNow = e;
 
-
-
-
-
-
-
-
       if (this.options.mouseEase) {
-
-
-
-
-
-
-
 
         this.mouseEaseX = this.mouseEaseX || this.mouseX || 0;
 
-
-
-
-
-
-
-
         this.mouseEaseY = this.mouseEaseY || this.mouseY || 0;
-
-
-
-
-
-
-
 
         if (Math.abs(this.mouseEaseX - this.mouseX) + Math.abs(this.mouseEaseY - this.mouseY) > 0.1) {
 
-
-
-
-
-
-
-
           this.mouseEaseX += 0.05 * (this.mouseX - this.mouseEaseX);
-
-
-
-
-
-
-
 
           this.mouseEaseY += 0.05 * (this.mouseY - this.mouseEaseY);
 
-
-
-
-
-
-
-
           this.triggerMouseMove(this.mouseEaseX, this.mouseEaseY);
-
-
-
-
-
-
-
 
         }
 
-
-
-
-
-
-
-
       }
-
-
-
-
-
-
-
 
       if (this.scene && this.camera && this.renderer) {
 
-
-
-
-
-
-
-
         this.renderer.render(this.scene, this.camera);
 
-
-
-
-
-
-
-
       }
-
-
-
-
-
-
-
 
       this.req = window.requestAnimationFrame(this.animationLoop);
 
-
-
-
-
-
-
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     restart() {
 
-
-
-
-
-
-
-
       if (this.scene) {
-
-
-
-
-
-
-
 
         for (; this.scene.children.length;) {
 
-
-
-
-
-
-
-
           this.scene.remove(this.scene.children[0]);
-
-
-
-
-
-
-
 
         }
 
-
-
-
-
-
-
-
       }
-
-
-
-
-
-
-
 
       if (typeof this.onRestart === 'function') this.onRestart();
 
-
-
-
-
-
-
-
       this.init();
-
-
-
-
-
-
-
 
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     init() {
-
-
-
-
-
-
-
 
       if (typeof this.onInit === 'function') this.onInit();
 
-
-
-
-
-
-
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     destroy() {
 
-
-
-
-
-
-
-
       if (typeof this.onDestroy === 'function') this.onDestroy();
-
-
-
-
-
-
-
 
       window.removeEventListener('touchstart', this.windowTouchWrapper);
 
-
-
-
-
-
-
-
       window.removeEventListener('touchmove', this.windowTouchWrapper);
-
-
-
-
-
-
-
 
       window.removeEventListener('scroll', this.windowMouseMoveWrapper);
 
-
-
-
-
-
-
-
       window.removeEventListener('mousemove', this.windowMouseMoveWrapper);
-
-
-
-
-
-
-
 
       window.removeEventListener('resize', this.resize);
 
-
-
-
-
-
-
-
       window.cancelAnimationFrame(this.req);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
       const t = this.scene;
 
-
-
-
-
-
-
-
       if (t && t.children) disposeNode(t);
-
-
-
-
-
-
-
 
       if (this.renderer) {
 
-
-
-
-
-
-
-
         if (this.renderer.domElement && this.renderer.domElement.parentNode) {
-
-
-
-
-
-
-
 
           this.renderer.domElement.parentNode.removeChild(this.renderer.domElement);
 
-
-
-
-
-
-
-
         }
-
-
-
-
-
-
-
 
         this.renderer = null;
 
-
-
-
-
-
-
-
         this.scene = null;
 
-
-
-
-
-
-
-
       }
-
-
-
-
-
-
-
 
       if (n.current === this) n.current = null;
 
-
-
-
-
-
-
-
     }
 
-
-
-
-
-
-
-
   };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   class ShaderBase extends n.VantaBase {
 
-
-
-
-
-
-
-
     constructor(e) {
-
-
-
-
-
-
-
 
       super(e);
 
-
-
-
-
-
-
-
       this.updateUniforms = this.updateUniforms.bind(this);
 
-
-
-
-
-
-
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     init() {
 
-
-
-
-
-
-
-
       this.mode = 'shader';
-
-
-
-
-
-
-
 
       this.uniforms = {
 
-
-
-
-
-
-
-
         iTime: { type: 'f', value: 1 },
-
-
-
-
-
-
-
 
         iResolution: { type: 'v2', value: new THREE.Vector2(1, 1) },
 
-
-
-
-
-
-
-
         iDpr: { type: 'f', value: window.devicePixelRatio || 1 },
-
-
-
-
-
-
-
 
         iMouse: { type: 'v2', value: new THREE.Vector2(this.mouseX || 0, this.mouseY || 0) }
 
-
-
-
-
-
-
-
       };
-
-
-
-
-
-
-
 
       super.init();
 
-
-
-
-
-
-
-
       if (this.fragmentShader) this.initBasicShader();
 
-
-
-
-
-
-
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     setOptions(e) {
 
-
-
-
-
-
-
-
       super.setOptions(e);
-
-
-
-
-
-
-
 
       this.updateUniforms();
 
-
-
-
-
-
-
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     initBasicShader(e = this.fragmentShader, t = this.vertexShader) {
 
-
-
-
-
-
-
-
       if (!t) {
-
-
-
-
-
-
-
 
         t = `
 
-
-
-
-
-
-
-
           uniform float uTime;
-
-
-
-
-
-
-
 
           uniform vec2 uResolution;
 
-
-
-
-
-
-
-
           void main() {
-
-
-
-
-
-
-
 
             gl_Position = vec4( position, 1.0 );
 
-
-
-
-
-
-
-
           }
-
-
-
-
-
-
-
 
         `;
 
-
-
-
-
-
-
-
       }
-
-
-
-
-
-
-
 
       this.updateUniforms();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       const mat = new THREE.ShaderMaterial({
-
-
-
-
-
-
-
 
         uniforms: this.uniforms,
 
-
-
-
-
-
-
-
         vertexShader: t,
-
-
-
-
-
-
-
 
         fragmentShader: e
 
-
-
-
-
-
-
-
       });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
       // Procedural procedural noise texture generator so no external network file is required!
 
-
-
-
-
-
-
-
       const size = 128;
-
-
-
-
-
-
-
 
       const data = new Uint8Array(size * size * 4);
 
-
-
-
-
-
-
-
       for (let i = 0; i < size * size * 4; i += 4) {
-
-
-
-
-
-
-
 
         const val = Math.floor(Math.random() * 255);
 
-
-
-
-
-
-
-
         data[i] = val;
-
-
-
-
-
-
-
 
         data[i + 1] = val;
 
-
-
-
-
-
-
-
         data[i + 2] = val;
-
-
-
-
-
-
-
 
         data[i + 3] = 255;
 
-
-
-
-
-
-
-
       }
-
-
-
-
-
-
-
 
       const noiseTexture = new THREE.DataTexture(data, size, size, THREE.RGBAFormat);
 
-
-
-
-
-
-
-
       noiseTexture.wrapS = THREE.RepeatWrapping;
-
-
-
-
-
-
-
 
       noiseTexture.wrapT = THREE.RepeatWrapping;
 
-
-
-
-
-
-
-
       noiseTexture.needsUpdate = true;
-
-
-
-
-
-
-
 
       this.uniforms.iTex = { type: 't', value: noiseTexture };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat);
-
-
-
-
-
-
-
 
       this.scene.add(mesh);
 
-
-
-
-
-
-
-
       this.camera = new THREE.Camera();
-
-
-
-
-
-
-
 
       this.camera.position.z = 1;
 
-
-
-
-
-
-
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     updateUniforms() {
 
-
-
-
-
-
-
-
       const e = {};
-
-
-
-
-
-
-
 
       let t, i;
 
-
-
-
-
-
-
-
       for (t in this.options) {
-
-
-
-
-
-
-
 
         i = this.options[t];
 
-
-
-
-
-
-
-
         if (t.toLowerCase().indexOf('color') !== -1) {
-
-
-
-
-
-
-
 
           const col = new THREE.Color(i);
 
-
-
-
-
-
-
-
           e[t] = { type: 'v3', value: new THREE.Vector3(col.r, col.g, col.b) };
-
-
-
-
-
-
-
 
         } else if (typeof i === 'number') {
 
-
-
-
-
-
-
-
           e[t] = { type: 'f', value: i };
-
-
-
-
-
-
-
 
         }
 
-
-
-
-
-
-
-
       }
-
-
-
-
-
-
-
 
       return Object.assign(this.uniforms, e);
 
-
-
-
-
-
-
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     resize() {
 
-
-
-
-
-
-
-
       super.resize();
-
-
-
-
-
-
-
 
       if (this.uniforms && this.uniforms.iResolution) {
 
-
-
-
-
-
-
-
         this.uniforms.iResolution.value.x = this.width / this.scale;
-
-
-
-
-
-
-
 
         this.uniforms.iResolution.value.y = this.height / this.scale;
 
-
-
-
-
-
-
-
       }
 
-
-
-
-
-
-
-
     }
-
-
-
-
-
-
-
 
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   class VantaClouds2 extends ShaderBase {}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   VantaClouds2.prototype.defaultOptions = {
 
-
-
-
-
-
-
-
     backgroundColor: 0x0b0f17,
-
-
-
-
-
-
-
 
     skyColor: 0x5ca7ea,
 
-
-
-
-
-
-
-
     cloudColor: 0x334d80,
-
-
-
-
-
-
-
 
     lightColor: 0xffffff,
 
-
-
-
-
-
-
-
     speed: 0.8,
-
-
-
-
-
-
-
 
     scaleMobile: 3
 
-
-
-
-
-
-
-
   };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   VantaClouds2.prototype.fragmentShader = `
 
-
-
-
-
-
-
-
     uniform vec2 iResolution;
-
-
-
-
-
-
-
 
     uniform vec2 iMouse;
 
-
-
-
-
-
-
-
     uniform float iTime;
-
-
-
-
-
-
-
 
     uniform sampler2D iTex;
 
-
-
-
-
-
-
-
     uniform float speed;
-
-
-
-
-
-
-
 
     uniform vec3 skyColor;
 
-
-
-
-
-
-
-
     uniform vec3 cloudColor;
-
-
-
-
-
-
-
 
     uniform vec3 lightColor;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     #define T texture2D(iTex, fract((s*p.zw + ceil(s*p.x)) / 200.0)).y / (s += s) * 4.0
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     void main() {
 
-
-
-
-
-
-
-
       vec2 coord = gl_FragCoord.xy;
-
-
-
-
-
-
-
 
       vec4 p, d = vec4(0.8, 0.0, coord / iResolution.y - 0.65);
 
-
-
-
-
-
-
-
       vec3 out1 = skyColor - d.w;
-
-
-
-
-
-
-
 
       float s, f, t = 200.0 + sin(dot(coord, coord));
 
-
-
-
-
-
-
-
       const float MAX_ITER = 60.0;
-
-
-
-
-
-
-
 
       for (float i = 1.0; i <= MAX_ITER; i += 1.0) {
 
-
-
-
-
-
-
-
         t -= 2.0;
-
-
-
-
-
-
-
 
         if (t < 0.0) { break; }
 
-
-
-
-
-
-
-
         p = 0.05 * t * d;
-
-
-
-
-
-
-
 
         p.xz += iTime * 0.40000 * speed;
 
-
-
-
-
-
-
-
         p.x += sin(iTime * 0.20 * speed) * 0.25;
-
-
-
-
-
-
-
 
         s = 2.0;
 
-
-
-
-
-
-
-
         f = p.w + 1.0 - T - T - T - T;
-
-
-
-
-
-
-
 
         if (f < 0.0) {
 
-
-
-
-
-
-
-
           vec3 cloudColorShading = mix(lightColor, cloudColor, -f);
-
-
-
-
-
-
-
 
           out1 = mix(out1, cloudColorShading, -f * 0.4);
 
-
-
-
-
-
-
-
         }
-
-
-
-
-
-
-
 
       }
 
-
-
-
-
-
-
-
       gl_FragColor = vec4(out1, 1.0);
-
-
-
-
-
-
-
 
     }
 
-
-
-
-
-
-
-
   `;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   return new VantaClouds2(options);
-
-
-
-
-
-
-
 
 }145170195219251283299337362
